@@ -1,8 +1,11 @@
 import json
 import random
+
 import numpy as np
 import torch
+
 from code_sae.logger import logger
+
 
 def read_jsonl_file(jsonl_path):
     with open(jsonl_path, "r") as f:
@@ -21,6 +24,7 @@ def set_seed(seed: int = 42):
     np.random.seed(seed)
     random.seed(seed)
     return seed
+
 
 def get_device() -> str:
     """
