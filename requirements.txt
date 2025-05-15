@@ -12,4 +12,4 @@ pre-commit
 transformer_lens
 circuitsvis
 sae_lens
-dictionary_learning
+# dictionary_learning

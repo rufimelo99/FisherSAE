@@ -28,7 +28,7 @@ def parse_args():
 
 def train():
     total_training_steps = 10  # probably we should do more
-    batch_size = 1024
+    batch_size = 1
     total_training_tokens = total_training_steps * batch_size
 
     lr_warm_up_steps = 0
@@ -89,7 +89,10 @@ def train():
     )
     # look at the next cell to see some instruction for what to do while this is running.
     sparse_autoencoder = SAETrainingRunner(cfg).run()
-    breakpoint()
+
+    # save the model
+    sparse_autoencoder.save_model(os.path.join(cfg.checkpoint_path, "sparse_autoencoder.pt"))
+
 
 if __name__ == "__main__":
     # args = parse_args()
