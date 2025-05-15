@@ -1,0 +1,63 @@
+model_name: tiny-stories-1L-21M
+hook_name: blocks.0.hook_mlp_out
+hook_layer: 0
+d_in: 1024
+dataset_path: apollo-research/roneneldan-TinyStories-tokenizer-gpt2
+is_dataset_tokenized: true
+streaming: true
+
+# SAE Parameters
+mse_loss_normalization: null #ds
+expansion_factor: 16
+b_dec_init_method: zeros
+apply_b_dec_to_input: false
+normalize_sae_decoder: false
+scale_sparsity_penalty_by_decoder_norm: true
+decoder_heuristic_init: true
+init_encoder_as_decoder_transpose: true
+normalize_activations: expected_average_only_in
+
+# Training Parameters
+lr: 5e-5
+adam_beta1: 0.9
+adam_beta2: 0.999
+lr_scheduler_name: constant
+lr_warm_up_steps: ${lr_warm_up_steps}
+lr_decay_steps: ${lr_decay_steps}
+l1_coefficient: 5
+l1_warm_up_steps: ${l1_warm_up_steps}
+lp_norm: 1.0
+train_batch_size_tokens: ${batch_size}
+context_size: 512
+
+# Activation Store Parameters
+n_batches_in_buffer: 64
+training_tokens: ${total_training_tokens}
+store_batch_size_prompts: 16
+
+# Resampling protocol
+use_ghost_grads: false
+feature_sampling_window: 1000
+dead_feature_window: 1000
+dead_feature_threshold: 1e-4
+
+# WANDB
+log_to_wandb: false
+wandb_project: sae_lens_tutorial
+wandb_log_frequency: 30
+eval_every_n_wandb_logs: 20
+
+# Misc
+device: ${DEVICE}
+seed: ${SEED}
+n_checkpoints: 0
+checkpoint_path: checkpoints
+dtype: float32
+
+total_training_steps: 10  # probably we should do more
+batch_size: 1
+total_training_tokens: ${total_training_steps} * ${batch_size}
+
+lr_warm_up_steps: 0
+lr_decay_steps: ${total_training_steps} // 5  # 20% of training
+l1_warm_up_steps: ${total_training_steps} // 5  # 20% of training
