@@ -33,3 +33,6 @@ def main():
     )
     logger.info("Config loaded", config=cfg)
     PretokenizeRunner(cfg).run()
+
+if __name__ == "__main__":
+    main()
