@@ -1,16 +1,9 @@
 import argparse
 import json
 import os
-from dataclasses import dataclass
-from enum import Enum
-
-import pandas as pd
-import torch
 from sae_lens import (
     SAE,
     HookedSAETransformer,
-    LanguageModelSAERunnerConfig,
-    SAETrainingRunner,
 )
 
 from code_sae.logger import logger

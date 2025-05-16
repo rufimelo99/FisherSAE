@@ -1,15 +1,7 @@
 import argparse
 import json
 import os
-from dataclasses import dataclass
-from enum import Enum
-
-import pandas as pd
-import torch
-import yaml
 from sae_lens import (
-    SAE,
-    HookedSAETransformer,
     LanguageModelSAERunnerConfig,
     SAETrainingRunner,
 )
@@ -52,7 +44,6 @@ def train(config):
         seed=SEED,
     )
 
-    breakpoint()
     # look at the next cell to see some instruction for what to do while this is running.
     sparse_autoencoder = SAETrainingRunner(cfg).run()
 
