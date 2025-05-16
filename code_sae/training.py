@@ -38,6 +38,7 @@ def train(config):
         **config,
         lr_decay_steps=lr_decay_steps,  # this will help us avoid overfitting.
         l1_warm_up_steps=l1_warm_up_steps,  # this can help avoid too many dead features initially.
+        total_training_tokens=total_training_tokens,
         device=DEVICE,
         seed=SEED,
     )
