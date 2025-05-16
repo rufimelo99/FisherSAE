@@ -1,10 +1,8 @@
 import argparse
 import json
 import os
-from sae_lens import (
-    SAE,
-    HookedSAETransformer,
-)
+
+from sae_lens import SAE, HookedSAETransformer
 
 from code_sae.logger import logger
 from code_sae.utils import get_device, set_seed

@@ -1,10 +1,8 @@
 import argparse
 import json
 import os
-from sae_lens import (
-    LanguageModelSAERunnerConfig,
-    SAETrainingRunner,
-)
+
+from sae_lens import LanguageModelSAERunnerConfig, SAETrainingRunner
 
 from code_sae.logger import logger
 from code_sae.utils import get_device, set_seed
