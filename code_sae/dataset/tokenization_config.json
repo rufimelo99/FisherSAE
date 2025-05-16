@@ -9,7 +9,7 @@
   "sequence_separator_token": "eos",
 
   "split": "train",
-  "column": "func",
+  "column_name": "func",
 
   "save_path":"./tokenized_dataset"
 }
