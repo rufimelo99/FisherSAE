@@ -1,9 +1,9 @@
 {
-  "model_name": "tiny-stories-1L-21M",
+  "model_name": "gpt2",
   "hook_name": "blocks.0.hook_mlp_out",
   "hook_layer": 0,
-  "d_in": 1024,
-  "dataset_path": "apollo-research/roneneldan-TinyStories-tokenizer-gpt2",
+  "d_in": 768,
+  "dataset_path": "TQRG/devign_gpt2_tokenized",
   "is_dataset_tokenized": true,
   "streaming": true,
 
@@ -17,7 +17,7 @@
   "init_encoder_as_decoder_transpose": true,
   "normalize_activations": "expected_average_only_in",
 
-  "train_batch_size_tokens": 1024,
+  "train_batch_size_tokens": 768,
 
   "lr": 5e-5,
   "adam_beta1": 0.9,

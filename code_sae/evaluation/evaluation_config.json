@@ -1,0 +1,11 @@
+{
+  "model_name": "tiny-stories-1L-21M",
+  "hook_name": "blocks.0.hook_mlp_out",
+  "hook_layer": 0,
+  "d_in": 1024,
+  "dataset_path": "TQRG/devign_gpt2_tokenized",
+  "is_dataset_tokenized": true,
+  "streaming": true,
+
+  "sae_path"
+}
