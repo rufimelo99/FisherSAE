@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 from dataclasses import dataclass
-from enum import Enum
 from functools import partial
 from pathlib import Path
 from typing import Any, List, Tuple
@@ -12,13 +11,9 @@ import torch
 from sae_lens import (
     SAE,
     HookedSAETransformer,
-    PretokenizeRunner,
-    PretokenizeRunnerConfig,
 )
 from sae_lens.training.activations_store import ActivationsStore
 from tqdm import tqdm
-from transformer_lens import HookedTransformer
-from transformer_lens.hook_points import HookedRootModule
 
 from code_sae.logger import logger
 from code_sae.utils import get_device, js_div, kl_div, set_seed
