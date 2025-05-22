@@ -1,0 +1,20 @@
+{
+  "model_name": "gpt2",
+  "hook_name": "blocks.0.hook_mlp_out",
+  "hook_layer": 0,
+  "is_dataset_tokenized": true,
+  "streaming": true,
+
+  "sae_paths": [
+    "artifacts/vqb9oqar/final_2000640/"
+  ],
+
+  "datasets": [
+    "TQRG/devign_gpt2_tokenized"
+  ],
+
+  "output_dir": "artifacts/evaluation/",
+  "ctx_len": 256,
+  "eval_batch_size_prompts": 16,
+  "n_batches":2
+}
