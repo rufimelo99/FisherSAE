@@ -6,6 +6,7 @@
   "dataset_path": "TQRG/devign_gpt2_tokenized",
   "is_dataset_tokenized": true,
   "streaming": true,
+  "architecture": "context_likelihood",
 
   "mse_loss_normalization": null,
   "expansion_factor": 16,
