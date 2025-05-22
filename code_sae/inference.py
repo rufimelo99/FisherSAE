@@ -65,7 +65,7 @@ def main():
     delta_lm_loss = loss_sae - loss_no_sae
     breakpoint()
     # --- Compute L0 sparsity ---
-    f = sae.encode(cache[sae.cfg.hook_name])  # SAE pre-activations
+    f = sae.encode(cache[sae.cfg.hook_name + ".hook_sae_input"])  # SAE activations
     l0_sparsity = compute_l0(f)
     # --- Report ---
     print(f"Prompt: {text}")
@@ -73,8 +73,6 @@ def main():
     print(f"Cross-entropy loss (with SAE): {loss_sae:.5f}")
     print(f"Δ LM Loss: {delta_lm_loss:.5f}")
     print(f"Average L0 (active features per token): {l0_sparsity:.2f}")
-
-    # _, cache = model.run_with_cache_with_saes("olá joca", saes=[sae])
 
 
 if __name__ == "__main__":
