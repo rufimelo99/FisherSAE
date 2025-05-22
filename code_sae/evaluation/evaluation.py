@@ -3,8 +3,9 @@ import json
 import os
 from dataclasses import dataclass
 from enum import Enum
+from functools import partial
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import torch
 from sae_lens import (
@@ -19,7 +20,7 @@ from transformer_lens import HookedTransformer
 from transformer_lens.hook_points import HookedRootModule
 
 from code_sae.logger import logger
-from code_sae.utils import get_device, set_seed
+from code_sae.utils import get_device, js_div, kl_div, set_seed
 
 DEVICE = get_device()
 SEED = set_seed()
@@ -81,23 +82,84 @@ def get_recons_loss(
     activation_store: ActivationsStore,
 ):
     print("oi")
-    original_logits, original_ce_loss = model(
+
+    original_logits = model.forward(batch_tokens, loss_per_token=True)
+    original_ce_loss = torch.nn.functional.cross_entropy(
+        original_logits[:, :-1].reshape(-1, original_logits.size(-1)),
+        batch_tokens[:, 1:].reshape(-1),
+        reduction="mean",
+    ).item()
+
+    hook_name = sae.cfg.hook_name
+    mask = torch.ones_like(batch_tokens, dtype=torch.bool)
+
+    # TODO(tomMcGrath): the rescaling below is a bit of a hack and could probably be tidied up
+    def standard_replacement_hook(activations: torch.Tensor, hook: Any):  # noqa: ARG001
+        original_device = activations.device
+        activations = activations.to(sae.device)
+
+        # Handle rescaling if SAE expects it
+        if activation_store.normalize_activations == "expected_average_only_in":
+            activations = activation_store.apply_norm_scaling_factor(activations)
+
+        # SAE class agnost forward forward pass.
+        new_activations = sae.decode(sae.encode(activations)).to(activations.dtype)
+
+        # Unscale if activations were scaled prior to going into the SAE
+        if activation_store.normalize_activations == "expected_average_only_in":
+            new_activations = activation_store.unscale(new_activations)
+
+        new_activations = torch.where(mask[..., None], new_activations, activations)
+
+        return new_activations.to(original_device)
+
+    def standard_zero_ablate_hook(activations: torch.Tensor, hook: Any):  # noqa: ARG001
+        original_device = activations.device
+        activations = activations.to(sae.device)
+        activations = torch.zeros_like(activations)
+        return activations.to(original_device)
+
+    has_head_dim_key_substrings = ["hook_q", "hook_k", "hook_v", "hook_z"]
+    if any(substring in hook_name for substring in has_head_dim_key_substrings):
+        # Look into SAELens/sae_lens/evals.py !
+        raise NotImplementedError(
+            "We would need to modify the SAE to work with head dim keys."
+        )
+    replacement_hook = standard_replacement_hook
+    zero_ablate_hook = standard_zero_ablate_hook
+
+    print("original_logits", original_logits)
+    print("original_ce_loss", original_ce_loss)
+    recons_logits, recons_ce_loss = model.run_with_hooks(
         batch_tokens,
+        return_type="both",
+        fwd_hooks=[(hook_name, partial(replacement_hook))],
         loss_per_token=True,
     )
-    print("original_logits", original_logits.shape)
-    print("original_ce_loss", original_ce_loss.shape)
+    zero_abl_logits, zero_abl_ce_loss = model.run_with_hooks(
+        batch_tokens,
+        return_type="both",
+        fwd_hooks=[(hook_name, zero_ablate_hook)],
+        loss_per_token=True,
+    )
+
     breakpoint()
+
+    recons_kl_div = kl_div(original_logits, recons_logits).mean(dim=-1)
+    zero_abl_kl_div = kl_div(original_logits, zero_abl_logits).mean(dim=-1)
+
+    recons_js_div = js_div(original_logits, recons_logits).mean(dim=-1)
+    zero_abl_js_div = js_div(original_logits, zero_abl_logits).mean(dim=-1)
 
 
 @torch.no_grad()
 def run_evals(
     sae,
     activation_store: ActivationsStore,
-    model,
+    model: HookedSAETransformer,
     dataset,
-    n_batches=8,
-    eval_batch_size_prompts=512,
+    n_batches,
+    eval_batch_size_prompts,
     verbose=False,
 ):
     batch_iter = range(n_batches)
@@ -106,21 +168,14 @@ def run_evals(
 
     for _ in batch_iter:
         batch_tokens = activation_store.get_batch_tokens(eval_batch_size_prompts)
-        current_model = HookedTransformer.from_pretrained_no_processing(
-            "gpt2", device=DEVICE, **sae.cfg.model_from_pretrained_kwargs
-        )
-
-        breakpoint()
-        original_logits, original_ce_loss = current_model(
-            batch_tokens, loss_per_token=True
-        )
+        # current_model = HookedTransformer.from_pretrained_no_processing("gpt2", device=DEVICE, **sae.cfg.model_from_pretrained_kwargs)
 
         get_recons_loss(
             sae,
             model,
             batch_tokens,
             activation_store,
-        ).items()
+        )
         break
 
 
@@ -151,7 +206,7 @@ def run_evaluations(args: argparse.Namespace):
                 model, sae, context_size=config["ctx_len"], dataset=dataset
             )
             activation_store.shuffle_input_dataset(seed=42)
-
+            activation_store.set_norm_scaling_factor_if_needed()
             run_evals(
                 sae,
                 activation_store,

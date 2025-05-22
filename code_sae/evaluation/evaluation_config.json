@@ -15,6 +15,6 @@
 
   "output_dir": "artifacts/evaluation/",
   "ctx_len": 256,
-  "eval_batch_size_prompts": 256,
+  "eval_batch_size_prompts": 16,
   "n_batches":2
 }
