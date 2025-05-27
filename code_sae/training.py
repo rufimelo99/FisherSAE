@@ -40,7 +40,7 @@ def train(config):
         l1_warm_up_steps=l1_warm_up_steps,  # this can help avoid too many dead features initially.
         device=DEVICE,
         seed=SEED,
-        unique_id=config.get("run_name", None),
+        wandb_id=config.get("run_name", None),
     )
 
     # look at the next cell to see some instruction for what to do while this is running.
