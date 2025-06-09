@@ -1,0 +1,52 @@
+{
+  "model_name": "gpt2",
+  "hook_name": "blocks.5.hook_resid_mid",
+  "hook_layer": 5,
+  "d_in": 768,
+  "dataset_path": "TQRG/devign_gpt2_tokenized",
+  "is_dataset_tokenized": true,
+  "streaming": true,
+  "architecture": "gated",
+
+  "mse_loss_normalization": null,
+  "expansion_factor": 16,
+  "b_dec_init_method": "zeros",
+  "apply_b_dec_to_input": false,
+  "normalize_sae_decoder": false,
+  "scale_sparsity_penalty_by_decoder_norm": true,
+  "decoder_heuristic_init": true,
+  "init_encoder_as_decoder_transpose": true,
+  "normalize_activations": "expected_average_only_in",
+
+  "train_batch_size_tokens": 100,
+
+  "use_fisher": false,
+  "fisher_lambda_term": 1e-3,
+
+  "lr": 5e-5,
+  "adam_beta1": 0.9,
+  "adam_beta2": 0.999,
+  "lr_scheduler_name": "constant",
+  "lr_warm_up_steps": 0,
+  "l1_coefficient": 5,
+  "lp_norm": 0,
+  "context_size": 512,
+
+  "n_batches_in_buffer": 32,
+  "store_batch_size_prompts": 8,
+
+  "use_ghost_grads": false,
+  "feature_sampling_window": 1000,
+  "dead_feature_window": 1000,
+  "dead_feature_threshold": 1e-4,
+
+  "log_to_wandb": true,
+  "wandb_project": "Fisher",
+  "run_name": "layer_5_residual_mid_gpt2_gated_fisher",
+  "wandb_log_frequency": 30,
+  "eval_every_n_wandb_logs": 20,
+
+  "n_checkpoints": 0,
+  "checkpoint_path": "checkpoints",
+  "dtype": "float32"
+}
