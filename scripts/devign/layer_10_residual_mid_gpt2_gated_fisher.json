@@ -20,7 +20,7 @@
 
   "train_batch_size_tokens": 100,
 
-  "use_fisher": false,
+  "use_fisher": true,
   "fisher_lambda_term": 1e-3,
 
   "lr": 5e-5,

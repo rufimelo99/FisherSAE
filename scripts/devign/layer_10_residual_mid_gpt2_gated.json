@@ -1,7 +1,7 @@
 {
   "model_name": "gpt2",
-  "hook_name": "blocks.0.hook_resid_mid",
-  "hook_layer": 0,
+  "hook_name": "blocks.10.hook_resid_mid",
+  "hook_layer": 10,
   "d_in": 768,
   "dataset_path": "TQRG/devign_gpt2_tokenized",
   "is_dataset_tokenized": true,
@@ -20,7 +20,7 @@
 
   "train_batch_size_tokens": 100,
 
-  "use_fisher": true,
+  "use_fisher": false,
   "fisher_lambda_term": 1e-3,
 
   "lr": 5e-5,
@@ -42,7 +42,7 @@
 
   "log_to_wandb": true,
   "wandb_project": "Fisher",
-  "run_name": "layer_0_residual_mid_gpt2_gated_fisher",
+  "run_name": "layer_10_residual_mid_gpt2_gated_fisher",
   "wandb_log_frequency": 30,
   "eval_every_n_wandb_logs": 20,
 

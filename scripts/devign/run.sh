@@ -18,14 +18,19 @@ echo "Submitting job"
 export WANDB_MODE=offline
 BASE_DIR=/cfs/home/u021521/CodeSAE
 
+JSON_FILES=(
+  "layer_0_residual_mid_gpt2_gated_fisher.json"
+  "layer_0_residual_mid_gpt2_gated.json"
+  "layer_5_residual_mid_gpt2_gated_fisher.json"
+  "layer_5_residual_mid_gpt2_gated.json"
+  "layer_10_residual_mid_gpt2_gated_fisher.json"
+  "layer_10_residual_mid_gpt2_gated.json"
+)
 
-python $BASE_DIR/code_sae/training.py \
-  --config $BASE_DIR/scripts/devign/layer_0_residual_mid_gpt2_gated_fisher.json
-
-python $BASE_DIR/code_sae/training.py \
-  --config $BASE_DIR/scripts/devign/layer_5_residual_mid_gpt2_gated_fisher.json
-
-python $BASE_DIR/code_sae/training.py \
-  --config $BASE_DIR/scripts/devign/layer_10_residual_mid_gpt2_gated_fisher.json
+# Run training scripts for each configuration
+for json_file in "${JSON_FILES[@]}"; do
+  python $BASE_DIR/code_sae/training.py \
+    --config $BASE_DIR/scripts/devign/$json_file
+done
 
 wandb sync wandb/offline-run-*
