@@ -8,6 +8,6 @@ conda activate code_sae
 cd CodeSAE
 pip install -e .
 git submodule update --init --recursive
-cd CodeSAE
+cd SARLens
 pip install -e .
 ```
