@@ -31,6 +31,5 @@ JSON_FILES=(
 for json_file in "${JSON_FILES[@]}"; do
   python $BASE_DIR/code_sae/training.py \
     --config $BASE_DIR/scripts/devign/$json_file
+  wandb sync wandb/offline-run-*
 done
-
-wandb sync wandb/offline-run-*

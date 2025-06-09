@@ -42,7 +42,7 @@
 
   "log_to_wandb": true,
   "wandb_project": "Fisher",
-  "run_name": "layer_10_residual_mid_gpt2_gated_fisher",
+  "run_name": "layer_10_residual_mid_gpt2_gated",
   "wandb_log_frequency": 30,
   "eval_every_n_wandb_logs": 20,
 
