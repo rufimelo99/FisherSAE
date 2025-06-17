@@ -41,7 +41,7 @@
   "dead_feature_threshold": 1e-4,
 
   "log_to_wandb": true,
-  "wandb_project": "Fisher",
+  "wandb_project": "TinyStories",
   "run_name": "layer_0_residual_mid_gpt2_gated",
   "wandb_log_frequency": 30,
   "eval_every_n_wandb_logs": 20,
