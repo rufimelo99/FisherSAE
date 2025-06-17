@@ -3,7 +3,7 @@
   "hook_name": "blocks.0.hook_resid_mid",
   "hook_layer": 0,
   "d_in": 768,
-  "dataset_path": "TQRG/devign_gpt2_tokenized",
+  "dataset_path": "apollo-research/roneneldan-TinyStories-tokenizer-gpt2",
   "is_dataset_tokenized": true,
   "streaming": true,
   "architecture": "gated",
@@ -41,7 +41,7 @@
   "dead_feature_threshold": 1e-4,
 
   "log_to_wandb": true,
-  "wandb_project": "Fisher",
+  "wandb_project": "TinyStories",
   "run_name": "layer_0_residual_mid_gpt2_gated_fisher",
   "wandb_log_frequency": 30,
   "eval_every_n_wandb_logs": 20,
