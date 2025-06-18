@@ -21,6 +21,13 @@ def parse_args():
         help="Path to the config file",
     )
 
+    parser.add_argument(
+        "--kwargs",
+        type=str,
+        default="{}",
+        help="Additional keyword arguments to override config",
+    )
+
     return parser.parse_args()
 
 
@@ -59,4 +66,9 @@ if __name__ == "__main__":
         raise ValueError(f"Config path {json_path} does not exist.")
     with open(json_path, "r") as f:
         config = json.load(f)
+
+    kwargs = json.loads(args.kwargs)
+    if kwargs:
+        logger.info(f"Overriding config with: {kwargs}")
+        config.update(kwargs)
     train(config)
