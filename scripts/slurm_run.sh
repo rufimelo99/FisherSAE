@@ -19,7 +19,7 @@ echo "Submitting job"
 BASE_DIR=/cfs/home/u021521/CodeSAE
 
 BASE_CONFIG=(
-  "base_residual_mid_gpt2.json"
+  $BASE_DIR/scripts/base_residual_mid_gpt2.json
 )
 
 CONFIG_DIR=$BASE_DIR/scripts/generated_configs
