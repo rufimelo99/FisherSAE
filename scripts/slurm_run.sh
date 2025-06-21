@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH --job-name=code_sae_devign
-#SBATCH --mem=30G
+#SBATCH --mem=2G
 
-#SBATCH --gres=shard:6
+#SBATCH --gres=shard:0
 #SBATCH --time=300:00:00
 #SBATCH --mincpus=1
 #SBATCH --mail-type=all
@@ -25,6 +25,7 @@ BASE_CONFIG=(
 CONFIG_DIR=$BASE_DIR/scripts/generated_configs
 mkdir -p $CONFIG_DIR
 
+HOOK_POINTS=("hook_resid_mid" "hook_mlp_out")
 USE_FISHER_OPTIONS=("true" "false")
 HOOK_LAYERS=(0 5 10)
 ARCHITECTURES=("gated" "jumprelu" "topk" "standard")
@@ -42,30 +43,33 @@ for i in "${!WANDB_PROJECTS[@]}"; do
 
   for use_fisher in "${USE_FISHER_OPTIONS[@]}"; do
     for hook_layer in "${HOOK_LAYERS[@]}"; do
-      for arch in "${ARCHITECTURES[@]}"; do
-        config_name="config_${counter}.json"
-        config_path="$CONFIG_DIR/$config_name"
+      for hook_point in "${HOOK_POINTS[@]}"; do
+        for arch in "${ARCHITECTURES[@]}"; do
+          config_name="config_${counter}.json"
+          config_path="$CONFIG_DIR/$config_name"
 
-        jq \
-          --argjson use_fisher $use_fisher \
-          --argjson hook_layer $hook_layer \
-          --arg arch "$arch" \
-          --arg wandb_project "$wandb_project" \
-          --arg dataset_path "$dataset_path" \
-          '
-          .use_fisher = $use_fisher |
-          .hook_layer = $hook_layer |
-          .hook_name = ("blocks." + ($hook_layer|tostring) + ".hook_resid_mid") |
-          .architecture = $arch |
-          .wandb_project = $wandb_project |
-          .dataset_path = $dataset_path |
-          .run_name = ("layer_" + ($hook_layer|tostring) + "_residual_mid_gpt2_" + $arch + "_fisher_" + ($use_fisher|tostring) + "_project_" + $wandb_project)
-          ' "${BASE_CONFIG[0]}" > "$config_path"
+          jq \
+            --argjson use_fisher $use_fisher \
+            --argjson hook_layer $hook_layer \
+            --arg hook_point "$hook_point" \
+            --arg arch "$arch" \
+            --arg wandb_project "$wandb_project" \
+            --arg dataset_path "$dataset_path" \
+            '
+            .use_fisher = $use_fisher |
+            .hook_layer = $hook_layer |
+            .hook_name = ("blocks." + ($hook_layer|tostring) + "." + $hook_point) |
+            .architecture = $arch |
+            .wandb_project = $wandb_project |
+            .dataset_path = $dataset_path |
+            .run_name = ("layer_" + ($hook_layer|tostring) + "_" + $hook_point + "_gpt2_" + $arch + "_fisher_" + ($use_fisher|tostring) + "_project_" + $wandb_project)
+            ' "${BASE_CONFIG[0]}" > "$config_path"
 
-        echo "Running config $config_name"
-        python $BASE_DIR/code_sae/training.py --config "$config_path"
+          echo "Running config $config_name"
+          # python $BASE_DIR/code_sae/training.py --config "$config_path"
 
-        counter=$((counter + 1))
+          counter=$((counter + 1))
+        done
       done
     done
   done
