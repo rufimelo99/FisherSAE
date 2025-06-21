@@ -15,8 +15,8 @@ HOOK_LAYERS=(0 5 10)
 ARCHITECTURES=("gated" "jumprelu" "topk" "standard")
 
 # Paired project names and dataset paths
-WANDB_PROJECTS=("Devign" "TinyStories")
-DATASET_PATHS=("TQRG/devign_gpt2_tokenized" "apollo-research/roneneldan-TinyStories-tokenizer-gpt2")
+WANDB_PROJECTS=("Devign" "TinyStories" "TheStackPython" "TheStackJava")
+DATASET_PATHS=("TQRG/devign_gpt2_tokenized" "apollo-research/roneneldan-TinyStories-tokenizer-gpt2" "TQRG/bigcode_stack_dedup_python_gpt2_tokenized" "TQRG/reset23_stack_java_gpt2_tokenized")
 
 counter=0
 
