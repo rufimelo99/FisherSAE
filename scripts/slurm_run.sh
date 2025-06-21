@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH --job-name=code_sae_devign
-#SBATCH --mem=2G
+#SBATCH --mem=30G
 
-#SBATCH --gres=shard:0
+#SBATCH --gres=shard:6
 #SBATCH --time=300:00:00
 #SBATCH --mincpus=1
 #SBATCH --mail-type=all
@@ -66,7 +66,7 @@ for i in "${!WANDB_PROJECTS[@]}"; do
             ' "${BASE_CONFIG[0]}" > "$config_path"
 
           echo "Running config $config_name"
-          # python $BASE_DIR/code_sae/training.py --config "$config_path"
+          python $BASE_DIR/code_sae/training.py --config "$config_path"
 
           counter=$((counter + 1))
         done
