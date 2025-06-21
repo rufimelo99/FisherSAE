@@ -160,6 +160,5 @@ cython_debug/
 #.idea/
 /artifacts
 *.pdf
-/plots
 /scripts/devign/generated_configs
 /scripts/generated_configs
