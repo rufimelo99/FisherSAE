@@ -162,3 +162,5 @@ cython_debug/
 *.pdf
 /scripts/devign/generated_configs
 /scripts/generated_configs
+/plots/Devign_residual_mid
+/plots/TheStackJava_residual_mid
