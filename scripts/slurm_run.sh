@@ -25,7 +25,7 @@ BASE_CONFIG=(
 CONFIG_DIR=$BASE_DIR/scripts/generated_configs
 mkdir -p $CONFIG_DIR
 
-HOOK_POINTS=("hook_resid_mid" "hook_mlp_out")
+HOOK_POINTS=("hook_resid_mid" "hook_mlp_out" "hook_resid_pre")
 USE_FISHER_OPTIONS=("true" "false")
 HOOK_LAYERS=(0 5 10)
 ARCHITECTURES=("gated" "jumprelu" "topk" "standard")
