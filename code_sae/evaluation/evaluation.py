@@ -8,10 +8,7 @@ from typing import Any, List, Tuple
 
 import einops
 import torch
-from sae_lens import (
-    SAE,
-    HookedSAETransformer,
-)
+from sae_lens import SAE, HookedSAETransformer
 from sae_lens.training.activations_store import ActivationsStore
 from tqdm import tqdm
 
@@ -40,6 +37,7 @@ class SparsityMetrics:
     cossim: torch.Tensor
     mse: torch.Tensor
     cossim: torch.Tensor
+    covariance_matrix_value: torch.Tensor
 
 
 @dataclass
@@ -57,6 +55,7 @@ class SingleEvaluationResult:
     l2_norm_ratio: float
     cossim: float
     mse: float
+    covariance_matrix_value: float
 
     def to_dict(self):
         return {
@@ -73,6 +72,7 @@ class SingleEvaluationResult:
             "l2_norm_ratio": self.l2_norm_ratio,
             "cossim": self.cossim,
             "mse": self.mse,
+            "covariance_matrix_value": self.covariance_matrix_value,
         }
 
 
@@ -190,7 +190,7 @@ def get_sparsity_metrics(
     model: HookedSAETransformer,
     batch_tokens: torch.Tensor,
     activation_store: ActivationsStore,
-):
+) -> SparsityMetrics:
     hook_name = sae.cfg.hook_name
     hook_head_index = sae.cfg.hook_head_index
 
@@ -220,6 +220,23 @@ def get_sparsity_metrics(
 
     # send the (maybe normalised) activations into the SAE
     sae_feature_activations = sae.encode(original_act.to(sae.device))
+
+    def get_covariance_matrix_value(
+        activations: torch.Tensor, mask: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Computes the covariance matrix of the activations, masked by the provided mask.
+        """
+        activations = activations[mask]
+        cov_matrix = torch.cov(activations.T)
+        # Remove the diagonal to get the covariance of the features
+        cov_matrix = cov_matrix - torch.diag(torch.diag(cov_matrix))
+        return cov_matrix.sum(dim=0).sum(dim=0) / activations.shape[0]
+
+    covariance_matrix_value = get_covariance_matrix_value(
+        sae_feature_activations, mask
+    ).to("cpu")
+
     sae_out = sae.decode(sae_feature_activations).to(original_act.device)
     del cache
 
@@ -275,6 +292,7 @@ def get_sparsity_metrics(
         cossim=cossim,
         l2_norm_ratio=l2_norm_ratio,
         mse=mse,
+        covariance_matrix_value=covariance_matrix_value,
     )
     return sparsity_metrics
 
@@ -309,6 +327,7 @@ def run_evals(
         cossim=torch.tensor([]),
         l2_norm_ratio=torch.tensor([]),
         mse=torch.tensor([]),
+        covariance_matrix_value=torch.tensor([]),
     )
 
     for _ in batch_iter:
@@ -365,6 +384,12 @@ def run_evals(
         run_sparsity_metrics.cossim = torch.cat(
             [run_sparsity_metrics.cossim, sparsity_metrics.cossim]
         )
+        run_sparsity_metrics.covariance_matrix_value = torch.cat(
+            [
+                run_sparsity_metrics.covariance_matrix_value,
+                sparsity_metrics.covariance_matrix_value.unsqueeze(0),
+            ]
+        )
 
     # Average it out
     run_reconst_metrics.recons_kl_div = run_reconst_metrics.recons_kl_div.mean()
@@ -380,6 +405,9 @@ def run_evals(
     run_sparsity_metrics.l2_norm_ratio = run_sparsity_metrics.l2_norm_ratio.mean()
     run_sparsity_metrics.mse = run_sparsity_metrics.mse.mean()
     run_sparsity_metrics.cossim = run_sparsity_metrics.cossim.mean()
+    run_sparsity_metrics.covariance_matrix_value = (
+        run_sparsity_metrics.covariance_matrix_value.mean()
+    )
 
     final_results = SingleEvaluationResult(
         unique_id=unique_id,
@@ -395,6 +423,7 @@ def run_evals(
         cossim=run_sparsity_metrics.cossim.item(),
         l2_norm_ratio=run_sparsity_metrics.l2_norm_ratio.item(),
         mse=run_sparsity_metrics.mse.item(),
+        covariance_matrix_value=run_sparsity_metrics.covariance_matrix_value.item(),
     )
 
     return final_results
