@@ -162,6 +162,6 @@ cython_debug/
 *.pdf
 /scripts/devign/generated_configs
 /scripts/generated_configs
-/plots/Devign_residual_mid
-/plots/TheStackJava_residual_mid
-/plots/Devign_mlp_out
+/wandb/run-20250626_152525-layer0_residual_mid_gpt2_geted_fisher
+/wandb
+/checkpoints
