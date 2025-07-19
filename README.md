@@ -5,6 +5,8 @@
 
 ![Fisher](image.jpg)
 
+**Note**: I've decided to not continue with this project due to change of research focus and the results not being clearly superior to existing methods. The Fisher SAEs showed promise in improving sparsity and feature decorrelation, but the reconstruction fidelity and uncertain interpretability benefits did not justify further development at this time.
+The repository remains available for educational purposes and further research. If you have any questions or would like to collaborate or further expand the idea, feel free to reach out.
 
 ## Overview
 
@@ -70,9 +72,6 @@ This regularization discourages redundant latent feature activations, improving 
 - Substantial reduction in feature co-activation
 - Effective across various transformer layers and models (e.g., GPT-2 Small, Gemma 2B)
 
-## Usage
-
-Coming soon — code and training instructions.
 
 ## Citation
 
