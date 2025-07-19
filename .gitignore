@@ -159,9 +159,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /artifacts
-*.pdf
 /scripts/devign/generated_configs
 /scripts/generated_configs
 /wandb/run-20250626_152525-layer0_residual_mid_gpt2_geted_fisher
 /wandb
 /checkpoints
+*.pdf
