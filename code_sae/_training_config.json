@@ -34,8 +34,8 @@
   "sae_compilation_mode": null,
 
   "train_batch_size_tokens": 4096,
-  "training_tokens": 1000000,
-  "lr_decay_steps": 2000,
+  "training_tokens": 10000000,
+  "lr_decay_steps": 20000,
 
   "adam_beta1": 0.9,
   "adam_beta2": 0.999,
