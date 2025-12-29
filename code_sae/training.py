@@ -35,12 +35,13 @@ def parse_args():
 def train(config):
     train_batch_size_tokens = config["train_batch_size_tokens"]
 
-    total_training_steps = 10
+    # Get total_training_steps from config, default to 10000 if not provided
+    total_training_steps = config.get("total_training_steps", 10000)
 
     total_training_tokens = total_training_steps * train_batch_size_tokens
 
-    lr_decay_steps = total_training_steps // 5  # 20% of training
-    l1_warm_up_steps = total_training_steps // 20  # 5% of training
+    # Get lr_decay_steps from config, default to 20% of training if not provided
+    lr_decay_steps = config.get("lr_decay_steps", total_training_steps // 5)
 
     # Extract sae config to avoid duplicate argument
     sae_config = config.pop("sae", {})
