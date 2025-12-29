@@ -5,7 +5,7 @@
   "hook_name": "blocks.0.hook_resid_post",
   "hook_head_index": null,
 
-  "dataset_path": "TQRG/bigcodebench_llama_llama-3.2-1b-instruct-hf_tokenized",
+  "dataset_path": "TQRG/KodCode_llama-3.2-1b-instruct-hf_tokenized",
   "dataset_trust_remote_code": false,
   "streaming": true,
   "is_dataset_tokenized": true,
