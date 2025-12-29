@@ -33,25 +33,12 @@ def parse_args():
 
 
 def train(config):
-    train_batch_size_tokens = config["train_batch_size_tokens"]
-
-    # Get total_training_steps from config, default to 10000 if not provided
-    total_training_steps = config.get("total_training_steps", 10000)
-
-    total_training_tokens = total_training_steps * train_batch_size_tokens
-
-    # Get lr_decay_steps from config, default to 20% of training if not provided
-    lr_decay_steps = config.get("lr_decay_steps", total_training_steps // 5)
-
     # Extract sae config to avoid duplicate argument
     sae_config = config.pop("sae", {})
 
 
     cfg = LanguageModelSAERunnerConfig(
         **config,
-        training_tokens=total_training_tokens,
-        lr_decay_steps=lr_decay_steps,  # this will help us avoid overfitting.
-        # l1_warm_up_steps=l1_warm_up_steps,  # this can help avoid too many dead features initially.
         device=DEVICE,
         seed=SEED,
         # wandb_id=config.get("run_name", None),
