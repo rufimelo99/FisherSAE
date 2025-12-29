@@ -1,8 +1,9 @@
 import argparse
 import json
 import os
+from datetime import datetime
 
-from sae_lens import LanguageModelSAERunnerConfig, SAETrainingRunner, LoggingConfig
+from sae_lens import LanguageModelSAERunnerConfig, LoggingConfig, SAETrainingRunner
 from sae_lens.saes.gated_sae import GatedSAEConfig
 
 from code_sae.logger import logger as custom_logger
@@ -35,13 +36,12 @@ def parse_args():
 def train(config):
     sae_config = config.pop("sae", {})
 
-
     cfg = LanguageModelSAERunnerConfig(
         **config,
         device=DEVICE,
         seed=SEED,
         # wandb_id=config.get("run_name", None),
-        logger= LoggingConfig(
+        logger=LoggingConfig(
             log_to_wandb=True,
             wandb_project="Fisher_SAE",
             # run_name="experiment",
@@ -57,8 +57,13 @@ def train(config):
     sparse_autoencoder = SAETrainingRunner(cfg).run()
 
     # save the model
+    time_str = datetime.now().strftime("%Y%m%d_%H%M%S_")
+
     sparse_autoencoder.save_model(
-        os.path.join(cfg.checkpoint_path, "sparse_autoencoder.pt")
+        os.path.join(
+            f"{time_str}_{cfg.model_name}_{cfg.dataset_path}_{cfg.hook_name}",
+            "sparse_autoencoder.pt",
+        )
     )
 
 
