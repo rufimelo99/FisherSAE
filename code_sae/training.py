@@ -33,7 +33,6 @@ def parse_args():
 
 
 def train(config):
-    # Extract sae config to avoid duplicate argument
     sae_config = config.pop("sae", {})
 
 
