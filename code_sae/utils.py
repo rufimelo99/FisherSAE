@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from code_sae.logger import logger
+from code_sae.logger import logger as custom_logger
 
 
 def read_jsonl_file(jsonl_path):
@@ -37,7 +37,7 @@ def get_device() -> str:
         device = "mps"
     else:
         device = "cpu"
-    logger.info("Getting device.", device=device)
+    custom_logger.info("Getting device.", device=device)
     return device
 
 

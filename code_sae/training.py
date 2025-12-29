@@ -2,9 +2,10 @@ import argparse
 import json
 import os
 
-from sae_lens import LanguageModelSAERunnerConfig, SAETrainingRunner
+from sae_lens import LanguageModelSAERunnerConfig, SAETrainingRunner, LoggingConfig
+from sae_lens.saes.gated_sae import GatedSAEConfig
 
-from code_sae.logger import logger
+from code_sae.logger import logger as custom_logger
 from code_sae.utils import get_device, set_seed
 
 SEED = set_seed()
@@ -41,13 +42,28 @@ def train(config):
     lr_decay_steps = total_training_steps // 5  # 20% of training
     l1_warm_up_steps = total_training_steps // 20  # 5% of training
 
+    # Extract sae config to avoid duplicate argument
+    sae_config = config.pop("sae", {})
+
+
     cfg = LanguageModelSAERunnerConfig(
         **config,
+        training_tokens=total_training_tokens,
         lr_decay_steps=lr_decay_steps,  # this will help us avoid overfitting.
-        l1_warm_up_steps=l1_warm_up_steps,  # this can help avoid too many dead features initially.
+        # l1_warm_up_steps=l1_warm_up_steps,  # this can help avoid too many dead features initially.
         device=DEVICE,
         seed=SEED,
-        wandb_id=config.get("run_name", None),
+        # wandb_id=config.get("run_name", None),
+        logger= LoggingConfig(
+            log_to_wandb=True,
+            wandb_project="Fisher_SAE",
+            # run_name="experiment",
+            wandb_log_frequency=30,
+            eval_every_n_wandb_logs=20,
+        ),
+        sae=GatedSAEConfig(
+            **sae_config,
+        ),
     )
 
     # look at the next cell to see some instruction for what to do while this is running.
@@ -69,6 +85,6 @@ if __name__ == "__main__":
 
     kwargs = json.loads(args.kwargs)
     if kwargs:
-        logger.info(f"Overriding config with: {kwargs}")
+        custom_logger.info(f"Overriding config with: {kwargs}")
         config.update(kwargs)
     train(config)
