@@ -43,7 +43,7 @@ def parse_args():
 
 def train(config):
     sae_config = config.pop("sae", {})
-    sae_class = SAE_CONFIG_REGISTRY.get(sae_config.get("type"))
+    sae_class = SAE_CONFIG_REGISTRY.get(sae_config.pop("type"))
     if sae_class is None:
         raise ValueError(f"Unknown SAE type: {sae_config.get('type')}")
 
