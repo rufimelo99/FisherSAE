@@ -3,7 +3,7 @@
   "model_class_name": "HookedTransformer",
 
   "hook_name": "blocks.0.hook_resid_post",
-  "hook_head_index": 0,
+  "hook_head_index": null,
 
   "dataset_path": "TQRG/DeltaSecommits_codellama-7b-hf_tokenized",
   "dataset_trust_remote_code": false,
