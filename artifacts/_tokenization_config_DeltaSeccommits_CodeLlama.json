@@ -1,0 +1,17 @@
+{
+  "tokenizer_name": "codellama/CodeLlama-7b-hf",
+  "dataset_path":"rufimelo/DeltaSecommits",
+  "shuffle": true,
+  "num_proc": 4,
+
+  "begin_batch_token": "bos",
+  "begin_sequence_token": null,
+  "sequence_separator_token": "eos",
+
+  "split": "train",
+  "column_name": "after_version",
+
+  "save_path":"./artifacts/DeltaSecommits_codellama-7b-hf_tokenized",
+  
+  "hf_repo_id":"TQRG/DeltaSecommits_codellama-7b-hf_tokenized" 
+}
