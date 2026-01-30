@@ -3,7 +3,7 @@
   "model_class_name": "HookedTransformer",
 
   "hook_name": "blocks.0.hook_resid_post",
-  "hook_head_index": null,
+  "hook_head_index": 0,
 
   "dataset_path": "TQRG/DeltaSecommits_codellama-7b-hf_tokenized",
   "dataset_trust_remote_code": false,
@@ -39,7 +39,7 @@
 
   "adam_beta1": 0.9,
   "adam_beta2": 0.999,
-  "lr": 5e-5,
+  "lr": 1e-4,
   "lr_scheduler_name": "constant",
   "lr_end": null,
   "n_restart_cycles": 0,
@@ -70,6 +70,6 @@
     "apply_b_dec_to_input": true,
     "normalize_activations": "layer_norm",
     "reshape_activations": "none",
-    "type": "gated"
+    "type": "standard"
   }
 }
