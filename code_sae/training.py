@@ -54,7 +54,7 @@ def train(config):
         # wandb_id=config.get("run_name", None),
         logger=LoggingConfig(
             log_to_wandb=True,
-            wandb_project="Fisher_SAE",
+            wandb_project="Vulnerable-Lens-SAE",
             # run_name="experiment",
             wandb_log_frequency=30,
             eval_every_n_wandb_logs=20,
