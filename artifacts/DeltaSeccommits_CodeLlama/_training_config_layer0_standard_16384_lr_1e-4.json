@@ -63,7 +63,7 @@
   "exclude_special_tokens": false,
 
   "sae": {
-    "d_in": 4096,
+    "d_in": 3584,
     "d_sae": 16384,
     "dtype": "float32",
     "device": "cpu",
