@@ -68,6 +68,7 @@
     "device": "cpu",
     "apply_b_dec_to_input": true,
     "normalize_activations": "layer_norm",
-    "reshape_activations": "none"
+    "reshape_activations": "none",
+    "type": "gated"
   }
 }

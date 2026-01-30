@@ -5,9 +5,17 @@ from datetime import datetime
 
 from sae_lens import LanguageModelSAERunnerConfig, LoggingConfig, SAETrainingRunner
 from sae_lens.saes.gated_sae import GatedSAEConfig
+from sae_lens.saes.standard_sae import StandardSAEConfig
 
 from code_sae.logger import logger as custom_logger
 from code_sae.utils import get_device, set_seed
+
+SAE_CONFIG_REGISTRY = {
+    "gated": GatedSAEConfig,
+    "standard": StandardSAEConfig,
+    # "topk": TopKSAEConfig,
+    # "relu": ReluSAEConfig,
+}
 
 SEED = set_seed()
 DEVICE = get_device()
@@ -35,6 +43,9 @@ def parse_args():
 
 def train(config):
     sae_config = config.pop("sae", {})
+    sae_class = SAE_CONFIG_REGISTRY.get(sae_config.get("type"))
+    if sae_class is None:
+        raise ValueError(f"Unknown SAE type: {sae_config.get('type')}")
 
     cfg = LanguageModelSAERunnerConfig(
         **config,
@@ -48,7 +59,7 @@ def train(config):
             wandb_log_frequency=30,
             eval_every_n_wandb_logs=20,
         ),
-        sae=GatedSAEConfig(
+        sae=sae_class(
             **sae_config,
         ),
     )
