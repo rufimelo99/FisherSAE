@@ -39,7 +39,7 @@
   "adam_beta1": 0.9,
   "adam_beta2": 0.999,
   "lr": 3e-5,
-  "lr_scheduler_name": "consineannealing",
+  "lr_scheduler_name": "cosineannealing",
   "lr_decay_steps": 10000000,
   "lr_end": 3e-6,
   "n_restart_cycles": 0,
