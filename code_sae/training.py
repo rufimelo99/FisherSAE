@@ -6,6 +6,7 @@ from datetime import datetime
 from sae_lens import LanguageModelSAERunnerConfig, LoggingConfig, SAETrainingRunner
 from sae_lens.saes.gated_sae import GatedSAEConfig
 from sae_lens.saes.standard_sae import StandardSAEConfig
+from sae_lens.saes.topk_sae import TopKSAEConfig
 
 from code_sae.logger import logger as custom_logger
 from code_sae.utils import get_device, set_seed
@@ -13,7 +14,7 @@ from code_sae.utils import get_device, set_seed
 SAE_CONFIG_REGISTRY = {
     "gated": GatedSAEConfig,
     "standard": StandardSAEConfig,
-    # "topk": TopKSAEConfig,
+    "topk": TopKSAEConfig,
     # "relu": ReluSAEConfig,
 }
 
