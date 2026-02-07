@@ -19,6 +19,7 @@ import argparse
 import json
 import shutil
 from pathlib import Path
+
 from huggingface_hub import HfApi, create_repo
 
 
@@ -50,10 +51,12 @@ def create_readme(sae_dirs: list[Path], repo_id: str) -> str:
     hook_points_list = "\n".join([f"| `{hook}` |" for hook in hook_names])
 
     # Generate files list
-    files_list = "\n".join([
-        f"- `{hook}/cfg.json` - SAE configuration\n- `{hook}/sae_weights.safetensors` - Model weights\n- `{hook}/sparsity.safetensors` - Feature sparsity statistics"
-        for hook in hook_names
-    ])
+    files_list = "\n".join(
+        [
+            f"- `{hook}/cfg.json` - SAE configuration\n- `{hook}/sae_weights.safetensors` - Model weights\n- `{hook}/sparsity.safetensors` - Feature sparsity statistics"
+            for hook in hook_names
+        ]
+    )
 
     # Generate usage example with first hook
     first_hook = hook_names[0]
@@ -161,6 +164,7 @@ def push_sae_to_hub(
     # Create a temporary directory with the proper structure
     # SAELens expects: repo_id/hook_name/files
     import tempfile
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         hook_names = []
@@ -177,7 +181,11 @@ def push_sae_to_hub(
             sae_subdir.mkdir(parents=True, exist_ok=True)
 
             # Copy SAE files to subdirectory
-            files_to_upload = ["cfg.json", "sae_weights.safetensors", "sparsity.safetensors"]
+            files_to_upload = [
+                "cfg.json",
+                "sae_weights.safetensors",
+                "sparsity.safetensors",
+            ]
             for fname in files_to_upload:
                 src = sae_path / fname
                 if src.exists():
@@ -200,10 +208,14 @@ def push_sae_to_hub(
             token=token,
         )
 
-    print(f"\n✓ Successfully uploaded {len(sae_dirs)} SAE(s) to: https://huggingface.co/{repo_id}")
+    print(
+        f"\n✓ Successfully uploaded {len(sae_dirs)} SAE(s) to: https://huggingface.co/{repo_id}"
+    )
     print(f"\nAvailable sae_ids: {', '.join(hook_names)}")
     print(f"\nTo load with SAELens:")
-    print(f'  sae, cfg_dict, sparsity = SAE.from_pretrained("{repo_id}", sae_id="{hook_names[0]}")')
+    print(
+        f'  sae, cfg_dict, sparsity = SAE.from_pretrained("{repo_id}", sae_id="{hook_names[0]}")'
+    )
 
 
 def main():

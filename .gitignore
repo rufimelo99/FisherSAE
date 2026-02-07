@@ -164,3 +164,9 @@ cython_debug/
 /wandb
 /checkpoints
 *.pdf
+/artifacts/bigcodebench_llama_llama-3.2-1b-instruct-hf_tokenized
+/artifacts/bigcodebench_gemma3_1b_it_tokenized
+/artifacts/bigcodebench_codellama_codellama-7b-instruct-hf_tokenized
+/artifacts/devign_gemma3_1b_it_tokenized
+/artifacts/KodCode_llama-3.2-1b-instruct-hf_tokenized
+/artifacts/sae_DeltaSecommits_qwen_coder_blocks_0_hook_resid_post
