@@ -9,13 +9,14 @@ from sae_lens.saes.standard_sae import StandardSAEConfig
 from sae_lens.saes.topk_sae import TopKSAEConfig
 
 from code_sae.logger import logger as custom_logger
+from code_sae.topk_cl_sae import TopKCLTrainingSAEConfig
 from code_sae.utils import get_device, set_seed
 
 SAE_CONFIG_REGISTRY = {
     "gated": GatedSAEConfig,
     "standard": StandardSAEConfig,
     "topk": TopKSAEConfig,
-    # "relu": ReluSAEConfig,
+    "topk_cl": TopKCLTrainingSAEConfig,
 }
 
 SEED = set_seed()
