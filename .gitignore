@@ -170,3 +170,4 @@ cython_debug/
 /artifacts/devign_gemma3_1b_it_tokenized
 /artifacts/KodCode_llama-3.2-1b-instruct-hf_tokenized
 /artifacts/sae_DeltaSecommits_qwen_coder_blocks_0_hook_resid_post
+/artifacts/DeltaSecommits_vulnerable_qwen-2.5-7b-instruct_tokenized
