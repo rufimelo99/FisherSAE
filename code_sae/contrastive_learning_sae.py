@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import Optional, Tuple, List
 from torch.utils.data import DataLoader, Dataset
 
-from sae_lens.saes.topk_sae import TopKTrainingSAE, TopKTrainingSAEConfig
+from sae_lens.saes.sae import TrainingSAE, TrainingSAEConfig
 
 @dataclass
 class ContrastiveSAEConfig(TrainingSAEConfig):
