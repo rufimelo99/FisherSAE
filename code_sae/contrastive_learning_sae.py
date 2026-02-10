@@ -191,7 +191,7 @@ class ContrastiveSAE(TrainingSAE):
         mse_loss = F.mse_loss(sae_out, x, reduction='mean')
         l1_loss = feature_acts.abs().sum(dim=-1).mean()
 
-        loss = mse_loss + self.cfg.l1_coefficient * l1_loss
+        loss = mse_loss + self.cfg.l1_coeff * l1_loss
 
         return sae_out, feature_acts, loss, mse_loss, l1_loss
 
@@ -374,7 +374,7 @@ def create_contrastive_sae(
     d_sae: int = 16384,
     contrastive_weight: float = 0.1,
     contrastive_mode: str = "infonce",
-    l1_coefficient: float = 1e-3,
+    l1_coeff: float = 1e-3,
     **kwargs,
 ) -> ContrastiveSAE:
     """
@@ -383,7 +383,7 @@ def create_contrastive_sae(
     config = ContrastiveSAEConfig(
         d_in=d_model,
         d_sae=d_sae,
-        l1_coefficient=l1_coefficient,
+        l1_coeff=l1_coeff,
         contrastive_weight=contrastive_weight,
         contrastive_mode=contrastive_mode,
         **kwargs,
@@ -420,7 +420,7 @@ if __name__ == "__main__":
         d_sae=D_SAE,
         contrastive_weight=0.1,      # Weight for contrastive loss
         contrastive_mode="infonce",   # Options: "infonce", "triplet", "cosine"
-        l1_coefficient=1e-3,          # Sparsity penalty
+        l1_coeff=1e-3,                # Sparsity penalty
     )
 
     # Create trainer
