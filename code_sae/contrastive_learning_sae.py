@@ -21,6 +21,10 @@ class ContrastiveSAEConfig(TrainingSAEConfig):
 
     # Contrastive loss parameters
     contrastive_weight: float = 0.1  # Weight for contrastive loss term
+
+    @property
+    def architecture(self) -> str:
+        return "standard"
     contrastive_temperature: float = 0.07  # Temperature for InfoNCE loss
     contrastive_mode: str = "infonce"  # "infonce", "triplet", or "cosine"
     triplet_margin: float = 1.0  # Margin for triplet loss
