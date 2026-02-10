@@ -1,9 +1,3 @@
-from .contrastive_learning_sae import (
-	ContrastiveSAE,
-	ContrastiveSAEConfig,
-	ContrastiveTrainingSAE,
-	ContrastiveTrainingSAEConfig,
-)
 from .topk_cl_sae import (
 	TopKCLSAE,
 	TopKCLSAEConfig,
@@ -12,10 +6,6 @@ from .topk_cl_sae import (
 )
 
 __all__ = [
-	"ContrastiveSAE",
-	"ContrastiveSAEConfig",
-	"ContrastiveTrainingSAE",
-	"ContrastiveTrainingSAEConfig",
 	"TopKCLSAE",
 	"TopKCLSAEConfig",
 	"TopKCLTrainingSAE",
