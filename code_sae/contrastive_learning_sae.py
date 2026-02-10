@@ -13,25 +13,21 @@ from dataclasses import dataclass
 from typing import Optional, Tuple, List
 from torch.utils.data import DataLoader, Dataset
 
-from sae_lens.saes.sae import TrainingSAE, TrainingSAEConfig
+from sae_lens.saes.standard_sae import StandardTrainingSAE, StandardTrainingSAEConfig
 
 @dataclass
-class ContrastiveSAEConfig(TrainingSAEConfig):
+class ContrastiveSAEConfig(StandardTrainingSAEConfig):
     """Extended config for contrastive SAE training."""
 
     # Contrastive loss parameters
     contrastive_weight: float = 0.1  # Weight for contrastive loss term
-
-    @property
-    def architecture(self) -> str:
-        return "standard"
     contrastive_temperature: float = 0.07  # Temperature for InfoNCE loss
     contrastive_mode: str = "infonce"  # "infonce", "triplet", or "cosine"
     triplet_margin: float = 1.0  # Margin for triplet loss
     use_feature_contrastive: bool = True  # Apply contrastive on SAE features (vs reconstructions)
 
 
-class ContrastiveSAE(TrainingSAE):
+class ContrastiveSAE(StandardTrainingSAE):
     """
     Sparse Autoencoder with contrastive learning support.
 
@@ -191,7 +187,7 @@ class ContrastiveSAE(TrainingSAE):
         mse_loss = F.mse_loss(sae_out, x, reduction='mean')
         l1_loss = feature_acts.abs().sum(dim=-1).mean()
 
-        loss = mse_loss + self.cfg.l1_coeff * l1_loss
+        loss = mse_loss + self.cfg.l1_coefficient * l1_loss
 
         return sae_out, feature_acts, loss, mse_loss, l1_loss
 
@@ -374,7 +370,7 @@ def create_contrastive_sae(
     d_sae: int = 16384,
     contrastive_weight: float = 0.1,
     contrastive_mode: str = "infonce",
-    l1_coeff: float = 1e-3,
+    l1_coefficient: float = 1e-3,
     **kwargs,
 ) -> ContrastiveSAE:
     """
@@ -383,7 +379,7 @@ def create_contrastive_sae(
     config = ContrastiveSAEConfig(
         d_in=d_model,
         d_sae=d_sae,
-        l1_coeff=l1_coeff,
+        l1_coefficient=l1_coefficient,
         contrastive_weight=contrastive_weight,
         contrastive_mode=contrastive_mode,
         **kwargs,
@@ -420,7 +416,7 @@ if __name__ == "__main__":
         d_sae=D_SAE,
         contrastive_weight=0.1,      # Weight for contrastive loss
         contrastive_mode="infonce",   # Options: "infonce", "triplet", "cosine"
-        l1_coeff=1e-3,                # Sparsity penalty
+        l1_coefficient=1e-3,          # Sparsity penalty
     )
 
     # Create trainer
