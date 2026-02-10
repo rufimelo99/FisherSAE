@@ -76,38 +76,25 @@ class ContrastiveSAE(StandardTrainingSAE):
         """
         InfoNCE contrastive loss.
 
-        Treats features_a[i] as anchor, features_a[j] (j!=i) as positives of same type,
-        and features_b as negatives (different class).
+        For paired data (e.g., secure/vulnerable at same index), treats the
+        corresponding pair as positive and all other samples as negatives.
         """
         temperature = self.contrastive_cfg.contrastive_temperature
-        batch_size = features_a.shape[0]
 
         # Normalize features
         features_a = F.normalize(features_a, dim=-1)
         features_b = F.normalize(features_b, dim=-1)
 
-        # Compute similarity matrices
-        # Positive: similarity within same class (a with other a's)
-        sim_aa = torch.mm(features_a, features_a.t()) / temperature
-        # Negative: similarity between different classes (a with b's)
-        sim_ab = torch.mm(features_a, features_b.t()) / temperature
+        # Compute similarity matrix between a and b
+        logits = (features_a @ features_b.t()) / temperature
 
-        # For each anchor in a, treat other a's as positive and all b's as negative
-        # Mask out self-similarity
-        mask = torch.eye(batch_size, device=features_a.device).bool()
-        sim_aa = sim_aa.masked_fill(mask, float('-inf'))
+        # Labels: diagonal entries are positives (same index = corresponding pair)
+        labels = torch.arange(logits.shape[0], device=logits.device)
 
-        # Concatenate positive and negative similarities
-        # logits: [batch, batch-1 + batch] where first batch-1 are positives
-        logits = torch.cat([sim_aa, sim_ab], dim=1)
-
-        # Labels: positives are at indices 0 to batch-2 (excluding self)
-        # We want to maximize similarity with positives (same class)
-        # Simple approach: treat first non-self element as the positive
-        labels = torch.zeros(batch_size, dtype=torch.long, device=features_a.device)
-
-        loss = F.cross_entropy(logits, labels)
-        return loss
+        # Symmetric loss
+        loss_a = F.cross_entropy(logits, labels)
+        loss_b = F.cross_entropy(logits.t(), labels)
+        return (loss_a + loss_b) / 2
 
     def _triplet_loss(
         self,
