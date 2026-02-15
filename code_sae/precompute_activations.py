@@ -118,8 +118,9 @@ def precompute_activations(
             batch_end = min(i + batch_size, total_samples)
             batch = dataset[i:batch_end]
 
-            # Pad sequences
-            padded = [pad_sequence(sample[input_ids_column]) for sample in batch]
+            # HF datasets return dict of lists when slicing, not list of dicts
+            sequences = batch[input_ids_column]
+            padded = [pad_sequence(seq) for seq in sequences]
             input_ids = torch.tensor(padded, dtype=torch.long, device=device)
 
             # Get activations
@@ -158,7 +159,8 @@ def precompute_activations(
             batch_end = min(i + batch_size, total_samples)
             batch = dataset[i:batch_end]
 
-            padded = [pad_sequence(sample[input_ids_column]) for sample in batch]
+            sequences = batch[input_ids_column]
+            padded = [pad_sequence(seq) for seq in sequences]
             input_ids = torch.tensor(padded, dtype=torch.long, device=device)
 
             acts = get_activations_batch(input_ids).cpu()
