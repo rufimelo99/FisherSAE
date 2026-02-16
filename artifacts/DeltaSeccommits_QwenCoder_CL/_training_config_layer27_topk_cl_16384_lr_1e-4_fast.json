@@ -1,6 +1,7 @@
 {
   "positive_activations_path": "data/activations/positive_acts_layer27.pt",
   "negative_activations_path": "data/activations/negative_acts_layer27.pt",
+  "hook_name": "blocks.27.hook_resid_post",
 
   "batch_size": 256,
   "lr": 3e-4,

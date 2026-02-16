@@ -27,6 +27,7 @@ from tqdm import tqdm
 from code_sae.logger import logger
 from code_sae.topk_cl_sae import TopKCLTrainingSAE, TopKCLTrainingSAEConfig
 from code_sae.utils import get_device, set_seed
+from sae_lens.saes.sae import SAEMetadata
 
 SEED = set_seed()
 DEVICE = get_device()
@@ -64,6 +65,9 @@ class FastContrastiveTrainingConfig:
     use_feature_contrastive: bool = True
     dtype: str = "float32"
 
+    # Metadata
+    hook_name: str = "blocks.0.hook_resid_post"
+
     # Logging
     wandb_project: str = "Contrastive-SAE"
     wandb_run_name: str | None = None
@@ -97,6 +101,7 @@ def load_config(config_path: str) -> FastContrastiveTrainingConfig:
         contrastive_mode=sae_config.get("contrastive_mode", "infonce"),
         use_feature_contrastive=sae_config.get("use_feature_contrastive", True),
         dtype=sae_config.get("dtype", "float32"),
+        hook_name=config_dict.get("hook_name", "blocks.0.hook_resid_post"),
         wandb_project=config_dict.get("wandb_project", "Contrastive-SAE"),
         wandb_run_name=config_dict.get("wandb_run_name"),
         checkpoint_dir=config_dict.get("checkpoint_dir", "checkpoints/contrastive_sae"),
@@ -336,6 +341,7 @@ class FastContrastiveSAETrainer:
 
         runner_cfg = {
             "sae": sae_cfg,
+            "hook_name": self.config.hook_name,
             "positive_activations_path": self.config.positive_activations_path,
             "negative_activations_path": self.config.negative_activations_path,
             "training_tokens": self.total_tokens_seen,
@@ -369,6 +375,7 @@ class FastContrastiveSAETrainer:
 
 def create_sae(config: FastContrastiveTrainingConfig) -> TopKCLTrainingSAE:
     """Create a TopKCLTrainingSAE from config."""
+    metadata = SAEMetadata(hook_name=config.hook_name)
     sae_config = TopKCLTrainingSAEConfig(
         d_in=config.d_in,
         d_sae=config.d_sae,
@@ -379,6 +386,7 @@ def create_sae(config: FastContrastiveTrainingConfig) -> TopKCLTrainingSAE:
         contrastive_temperature=config.contrastive_temperature,
         contrastive_mode=config.contrastive_mode,
         use_feature_contrastive=config.use_feature_contrastive,
+        metadata=metadata,
     )
     return TopKCLTrainingSAE(sae_config)
 
