@@ -12,9 +12,13 @@ from typing import Literal
 
 import torch
 import torch.nn.functional as F
-
 from sae_lens.saes.sae import TrainStepInput, TrainStepOutput
-from sae_lens.saes.topk_sae import TopKSAE, TopKSAEConfig, TopKTrainingSAE, TopKTrainingSAEConfig
+from sae_lens.saes.topk_sae import (
+    TopKSAE,
+    TopKSAEConfig,
+    TopKTrainingSAE,
+    TopKTrainingSAEConfig,
+)
 
 
 @dataclass
@@ -56,10 +60,12 @@ class TopKCLTrainingSAE(TopKTrainingSAE):
 
     def _split_contrastive_inputs(
         self,
-        sae_in: torch.Tensor
-        | tuple[torch.Tensor, torch.Tensor]
-        | list[torch.Tensor]
-        | dict[str, torch.Tensor],
+        sae_in: (
+            torch.Tensor
+            | tuple[torch.Tensor, torch.Tensor]
+            | list[torch.Tensor]
+            | dict[str, torch.Tensor]
+        ),
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
         if isinstance(sae_in, (tuple, list)):
             if len(sae_in) != 2:
@@ -67,8 +73,10 @@ class TopKCLTrainingSAE(TopKTrainingSAE):
             return sae_in[0], sae_in[1], None
         if isinstance(sae_in, dict):
             if "activations_a" in sae_in and "activations_b" in sae_in:
-                return sae_in["activations_a"], sae_in["activations_b"], sae_in.get(
-                    "labels"
+                return (
+                    sae_in["activations_a"],
+                    sae_in["activations_b"],
+                    sae_in.get("labels"),
                 )
             if "sae_in_a" in sae_in and "sae_in_b" in sae_in:
                 return sae_in["sae_in_a"], sae_in["sae_in_b"], sae_in.get("labels")
@@ -153,7 +161,9 @@ class TopKCLTrainingSAE(TopKTrainingSAE):
 
         per_item_mse_a = self.mse_loss_fn(sae_out_a, act_a)
         per_item_mse_b = self.mse_loss_fn(sae_out_b, act_b)
-        mse_loss = (per_item_mse_a.sum(dim=-1).mean() + per_item_mse_b.sum(dim=-1).mean()) / 2
+        mse_loss = (
+            per_item_mse_a.sum(dim=-1).mean() + per_item_mse_b.sum(dim=-1).mean()
+        ) / 2
 
         step_input_a = TrainStepInput(
             sae_in=act_a,
@@ -197,8 +207,12 @@ class TopKCLTrainingSAE(TopKTrainingSAE):
                 losses[key] = avg_val
                 total_loss = total_loss + avg_val
         else:
-            aux_tensor_a = aux_a if isinstance(aux_a, torch.Tensor) else torch.zeros_like(mse_loss)
-            aux_tensor_b = aux_b if isinstance(aux_b, torch.Tensor) else torch.zeros_like(mse_loss)
+            aux_tensor_a = (
+                aux_a if isinstance(aux_a, torch.Tensor) else torch.zeros_like(mse_loss)
+            )
+            aux_tensor_b = (
+                aux_b if isinstance(aux_b, torch.Tensor) else torch.zeros_like(mse_loss)
+            )
             aux_avg = (aux_tensor_a + aux_tensor_b) / 2
             losses["aux_loss"] = aux_avg
             total_loss = total_loss + aux_avg

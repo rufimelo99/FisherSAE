@@ -1,0 +1,29 @@
+{
+  "positive_activations_path": "data/activations/positive_acts_layer14.pt",
+  "negative_activations_path": "data/activations/negative_acts_layer14.pt",
+
+  "batch_size": 256,
+  "lr": 3e-4,
+  "training_steps": 10000,
+  "warmup_steps": 500,
+  "log_every": 50,
+  "save_every": 1000,
+
+  "num_workers": 4,
+  "prefetch_factor": 4,
+  "pin_memory": true,
+
+  "wandb_project": "Contrastive-SAE",
+  "checkpoint_dir": "checkpoints/contrastive_sae_fast",
+
+  "sae": {
+    "d_in": 3584,
+    "d_sae": 16384,
+    "k": 64,
+    "dtype": "float32",
+    "contrastive_weight": 0.1,
+    "contrastive_temperature": 0.07,
+    "contrastive_mode": "infonce",
+    "use_feature_contrastive": true
+  }
+}

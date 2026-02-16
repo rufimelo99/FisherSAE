@@ -1,0 +1,16 @@
+{
+  "model_name": "Qwen/Qwen2.5-7B-Instruct",
+  "hook_name": "blocks.27.hook_resid_post",
+  "dtype": "float32",
+
+  "positive_dataset_path": "TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized",
+  "negative_dataset_path": "TQRG/DeltaSecommits_vulnerable_qwen-2.5-7b-instruct_tokenized",
+  "input_ids_column": "input_ids",
+
+  "positive_activations_path": "data/activations/positive_acts_layer27.pt",
+  "negative_activations_path": "data/activations/negative_acts_layer27.pt",
+
+  "precompute_batch_size": 64,
+  "max_samples": null,
+  "save_format": "pt"
+}

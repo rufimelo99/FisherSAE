@@ -104,7 +104,9 @@ def precompute_activations(
     d_model = sample_acts.shape[-1]
     acts_per_sample = sample_acts.shape[0]
 
-    logger.info(f"Activation shape: {acts_per_sample} tokens x {d_model} features per sample")
+    logger.info(
+        f"Activation shape: {acts_per_sample} tokens x {d_model} features per sample"
+    )
 
     if save_format == "memmap":
         # Create memory-mapped array for efficient storage
@@ -114,7 +116,9 @@ def precompute_activations(
 
         # Process in batches
         idx = 0
-        for i in tqdm(range(0, total_samples, batch_size), desc="Extracting activations"):
+        for i in tqdm(
+            range(0, total_samples, batch_size), desc="Extracting activations"
+        ):
             batch_end = min(i + batch_size, total_samples)
             batch = dataset[i:batch_end]
 
@@ -155,7 +159,9 @@ def precompute_activations(
         # Save as single PyTorch tensor
         all_acts = []
 
-        for i in tqdm(range(0, total_samples, batch_size), desc="Extracting activations"):
+        for i in tqdm(
+            range(0, total_samples, batch_size), desc="Extracting activations"
+        ):
             batch_end = min(i + batch_size, total_samples)
             batch = dataset[i:batch_end]
 
@@ -175,7 +181,9 @@ def precompute_activations(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Pre-compute activations for contrastive SAE")
+    parser = argparse.ArgumentParser(
+        description="Pre-compute activations for contrastive SAE"
+    )
     parser.add_argument("--config", type=str, required=True, help="Path to config file")
     args = parser.parse_args()
 

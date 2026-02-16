@@ -140,9 +140,13 @@ class PairedActivationExtractor:
 
         # Load datasets
         logger.info(f"Loading positive dataset: {positive_dataset_path}")
-        self.positive_dataset = load_dataset(positive_dataset_path, streaming=streaming, split="train")
+        self.positive_dataset = load_dataset(
+            positive_dataset_path, streaming=streaming, split="train"
+        )
         logger.info(f"Loading negative dataset: {negative_dataset_path}")
-        self.negative_dataset = load_dataset(negative_dataset_path, streaming=streaming, split="train")
+        self.negative_dataset = load_dataset(
+            negative_dataset_path, streaming=streaming, split="train"
+        )
 
         # Validate column exists in both datasets
         pos_sample = next(iter(self.positive_dataset))
@@ -274,7 +278,9 @@ class ContrastiveSAETrainer:
         metrics = {
             "total_loss": output.loss.item(),
             "mse_loss": output.losses.get("mse_loss", torch.tensor(0.0)).item(),
-            "contrastive_loss": output.losses.get("contrastive_loss", torch.tensor(0.0)).item(),
+            "contrastive_loss": output.losses.get(
+                "contrastive_loss", torch.tensor(0.0)
+            ).item(),
             "lr": self.scheduler.get_last_lr()[0],
             "step": self.step,
         }
@@ -286,8 +292,12 @@ class ContrastiveSAETrainer:
         logger.info(f"Starting contrastive SAE training on {DEVICE}")
         logger.info(f"Model: {self.config.model_name}")
         logger.info(f"Hook: {self.config.hook_name}")
-        logger.info(f"SAE: d_in={self.config.d_in}, d_sae={self.config.d_sae}, k={self.config.k}")
-        logger.info(f"Contrastive: weight={self.config.contrastive_weight}, mode={self.config.contrastive_mode}")
+        logger.info(
+            f"SAE: d_in={self.config.d_in}, d_sae={self.config.d_sae}, k={self.config.k}"
+        )
+        logger.info(
+            f"Contrastive: weight={self.config.contrastive_weight}, mode={self.config.contrastive_mode}"
+        )
         logger.info("-" * 50)
 
         # Initialize wandb

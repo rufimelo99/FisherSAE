@@ -116,9 +116,13 @@ class PrecomputedActivationsDataset(Dataset):
         device: str = "cpu",  # Keep on CPU for DataLoader, move to GPU in training
     ):
         logger.info(f"Loading positive activations from: {positive_path}")
-        self.positive_acts = torch.load(positive_path, map_location="cpu", weights_only=True)
+        self.positive_acts = torch.load(
+            positive_path, map_location="cpu", weights_only=True
+        )
         logger.info(f"Loading negative activations from: {negative_path}")
-        self.negative_acts = torch.load(negative_path, map_location="cpu", weights_only=True)
+        self.negative_acts = torch.load(
+            negative_path, map_location="cpu", weights_only=True
+        )
 
         # Ensure same number of samples
         min_len = min(len(self.positive_acts), len(self.negative_acts))
@@ -195,7 +199,9 @@ class FastContrastiveSAETrainer:
         metrics = {
             "total_loss": output.loss.item(),
             "mse_loss": output.losses.get("mse_loss", torch.tensor(0.0)).item(),
-            "contrastive_loss": output.losses.get("contrastive_loss", torch.tensor(0.0)).item(),
+            "contrastive_loss": output.losses.get(
+                "contrastive_loss", torch.tensor(0.0)
+            ).item(),
             "lr": self.scheduler.get_last_lr()[0],
             "step": self.step,
         }
@@ -205,9 +211,15 @@ class FastContrastiveSAETrainer:
     def train(self) -> None:
         """Full training loop with efficient data loading."""
         logger.info(f"Starting FAST contrastive SAE training on {DEVICE}")
-        logger.info(f"SAE: d_in={self.config.d_in}, d_sae={self.config.d_sae}, k={self.config.k}")
-        logger.info(f"Contrastive: weight={self.config.contrastive_weight}, mode={self.config.contrastive_mode}")
-        logger.info(f"Batch size: {self.config.batch_size}, Workers: {self.config.num_workers}")
+        logger.info(
+            f"SAE: d_in={self.config.d_in}, d_sae={self.config.d_sae}, k={self.config.k}"
+        )
+        logger.info(
+            f"Contrastive: weight={self.config.contrastive_weight}, mode={self.config.contrastive_mode}"
+        )
+        logger.info(
+            f"Batch size: {self.config.batch_size}, Workers: {self.config.num_workers}"
+        )
         logger.info("-" * 50)
 
         wandb.init(
@@ -288,7 +300,9 @@ def create_sae(config: FastContrastiveTrainingConfig) -> TopKCLTrainingSAE:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Fast contrastive SAE training with pre-computed activations")
+    parser = argparse.ArgumentParser(
+        description="Fast contrastive SAE training with pre-computed activations"
+    )
     parser.add_argument(
         "--config",
         type=str,
