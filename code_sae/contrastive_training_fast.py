@@ -20,6 +20,7 @@ from typing import Literal
 
 import torch
 import wandb
+from safetensors.torch import save_file
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
@@ -171,6 +172,10 @@ class FastContrastiveSAETrainer:
         self.step = 0
         self.best_loss = float("inf")
 
+        # Track feature activation counts for sparsity calculation
+        self.feature_activation_counts = torch.zeros(config.d_sae, device=DEVICE)
+        self.total_tokens_seen = 0
+
     def train_step(self, batch: dict[str, torch.Tensor]) -> dict[str, float]:
         """Single training step."""
         self.sae.train()
@@ -193,6 +198,22 @@ class FastContrastiveSAETrainer:
         output.loss.backward()
         self.optimizer.step()
         self.scheduler.step()
+
+        # Track feature activations for sparsity calculation
+        with torch.no_grad():
+            # Get feature activations from encoding
+            feature_acts_a, _ = self.sae.encode_with_hidden_pre(act_a)
+            feature_acts_b, _ = self.sae.encode_with_hidden_pre(act_b)
+
+            # Count which features were activated (non-zero in top-k sparse tensor)
+            batch_size = act_a.shape[0]
+            for feature_acts in [feature_acts_a, feature_acts_b]:
+                # feature_acts shape: (batch_size, d_sae) - sparse with k non-zero per row
+                # Get indices of non-zero activations
+                nonzero_mask = feature_acts != 0
+                activation_counts = nonzero_mask.sum(dim=0).float()
+                self.feature_activation_counts += activation_counts
+            self.total_tokens_seen += 2 * batch_size  # Both positive and negative
 
         self.step += 1
 
@@ -261,7 +282,7 @@ class FastContrastiveSAETrainer:
         logger.info("Training complete!")
 
     def save_checkpoint(self, final: bool = False) -> None:
-        """Save model checkpoint in sae_lens format (cfg.json + sae_weights.safetensors)."""
+        """Save model checkpoint in sae_lens format (cfg.json + sae_weights.safetensors + runner_cfg.json + sparsity.safetensors)."""
         checkpoint_dir = Path(self.config.checkpoint_dir)
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
@@ -273,6 +294,17 @@ class FastContrastiveSAETrainer:
         # Save in sae_lens format using built-in save_model method
         self.sae.save_model(sae_dir)
 
+        # Save runner_cfg.json (training configuration)
+        runner_cfg = self._build_runner_cfg()
+        runner_cfg_path = sae_dir / "runner_cfg.json"
+        with open(runner_cfg_path, "w") as f:
+            json.dump(runner_cfg, f, indent=2)
+
+        # Save sparsity.safetensors (feature activation frequencies)
+        sparsity = self._compute_sparsity()
+        sparsity_path = sae_dir / "sparsity.safetensors"
+        save_file({"sparsity": sparsity.cpu()}, sparsity_path)
+
         # Also save training state for resuming
         training_state_path = sae_dir / "training_state.pt"
         torch.save(
@@ -280,10 +312,59 @@ class FastContrastiveSAETrainer:
                 "optimizer_state_dict": self.optimizer.state_dict(),
                 "scheduler_state_dict": self.scheduler.state_dict(),
                 "step": self.step,
+                "feature_activation_counts": self.feature_activation_counts.cpu(),
+                "total_tokens_seen": self.total_tokens_seen,
             },
             training_state_path,
         )
         logger.info(f"Saved checkpoint to {sae_dir}")
+
+    def _build_runner_cfg(self) -> dict:
+        """Build runner configuration dict matching sae_lens format."""
+        sae_cfg = {
+            "d_in": self.config.d_in,
+            "d_sae": self.config.d_sae,
+            "dtype": self.config.dtype,
+            "device": "cpu",
+            "k": self.config.k,
+            "architecture": "topk",
+            "contrastive_weight": self.config.contrastive_weight,
+            "contrastive_temperature": self.config.contrastive_temperature,
+            "contrastive_mode": self.config.contrastive_mode,
+            "use_feature_contrastive": self.config.use_feature_contrastive,
+        }
+
+        runner_cfg = {
+            "sae": sae_cfg,
+            "positive_activations_path": self.config.positive_activations_path,
+            "negative_activations_path": self.config.negative_activations_path,
+            "training_tokens": self.total_tokens_seen,
+            "batch_size": self.config.batch_size,
+            "lr": self.config.lr,
+            "training_steps": self.config.training_steps,
+            "warmup_steps": self.config.warmup_steps,
+            "current_step": self.step,
+            "wandb_project": self.config.wandb_project,
+            "wandb_run_name": self.config.wandb_run_name,
+            "checkpoint_dir": self.config.checkpoint_dir,
+            "seed": SEED,
+        }
+
+        return runner_cfg
+
+    def _compute_sparsity(self) -> torch.Tensor:
+        """Compute log sparsity (feature activation frequency) for each feature."""
+        if self.total_tokens_seen == 0:
+            # Return zeros if no tokens seen yet
+            return torch.zeros(self.config.d_sae, dtype=torch.float32)
+
+        # Compute activation frequency per feature
+        feature_freq = self.feature_activation_counts / self.total_tokens_seen
+
+        # Convert to log sparsity (log10 of frequency, clamped to avoid -inf)
+        log_sparsity = torch.log10(feature_freq.clamp(min=1e-10))
+
+        return log_sparsity.float()
 
 
 def create_sae(config: FastContrastiveTrainingConfig) -> TopKCLTrainingSAE:
