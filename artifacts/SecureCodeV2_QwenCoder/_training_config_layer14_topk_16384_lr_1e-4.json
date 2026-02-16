@@ -1,0 +1,76 @@
+{
+  "model_name": "Qwen/Qwen2.5-7B-Instruct",
+  "model_class_name": "HookedTransformer",
+
+  "hook_name": "blocks.14.hook_resid_post",
+  "hook_head_index": null,
+
+  "dataset_path": "TQRG/SecureCodeV2_qwen-2.5-7b-instruct_tokenized",
+  "dataset_trust_remote_code": false,
+  "streaming": true,
+  "is_dataset_tokenized": true,
+
+  "use_cached_activations": false,
+  "cached_activations_path": null,
+  "from_pretrained_path": null,
+
+  "n_batches_in_buffer": 32,
+  "store_batch_size_prompts": 8,
+
+  "seqpos_slice": [null, null],
+  "disable_concat_sequences": false,
+  "sequence_separator_token": "bos",
+
+  "act_store_device": "cpu",
+  "dtype": "float32",
+
+  "prepend_bos": true,
+  "autocast": false,
+  "autocast_lm": false,
+
+  "compile_llm": false,
+  "llm_compilation_mode": null,
+  "compile_sae": false,
+  "sae_compilation_mode": null,
+
+  "train_batch_size_tokens": 4096,
+  "training_tokens": 10000000,
+
+  "adam_beta1": 0.9,
+  "adam_beta2": 0.999,
+  "lr": 3e-5,
+  "lr_scheduler_name": "cosineannealing",
+  "lr_decay_steps": 10000000,
+  "lr_end": 3e-6,
+  "n_restart_cycles": 0,
+
+  "dead_feature_window": 1000,
+  "feature_sampling_window": 1000,
+  "dead_feature_threshold": 1e-4,
+
+  "n_eval_batches": 10,
+  "eval_batch_size_prompts": 8,
+
+  "n_checkpoints": 0,
+  "checkpoint_path": "checkpoints",
+  "verbose": true,
+
+  "model_kwargs": {},
+  "model_from_pretrained_kwargs": {},
+
+  "sae_lens_version": "latest",
+  "sae_lens_training_version": "latest",
+  "exclude_special_tokens": false,
+
+  "sae": {
+    "d_in": 3584,
+    "d_sae": 16384,
+    "dtype": "float32",
+    "device": "cpu",
+    "apply_b_dec_to_input": true,
+    "normalize_activations": "layer_norm",
+    "reshape_activations": "none",
+    "type": "topk",
+    "k": 64
+  }
+}

@@ -171,3 +171,5 @@ cython_debug/
 /artifacts/KodCode_llama-3.2-1b-instruct-hf_tokenized
 /artifacts/sae_DeltaSecommits_qwen_coder_blocks_0_hook_resid_post
 /artifacts/DeltaSecommits_vulnerable_qwen-2.5-7b-instruct_tokenized
+/artifacts/SecureCodeV2_qwen-2.5-7b-instruct_tokenized
+/artifacts/SecureCodeV2_qwen-2.5-7b-instruct_tokenized_vulnerable

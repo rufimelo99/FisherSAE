@@ -1,0 +1,17 @@
+{
+  "tokenizer_name": "Qwen/Qwen2.5-7B-Instruct",
+  "dataset_path":"rufimelo/securecode-dataset",
+  "shuffle": true,
+  "num_proc": 4,
+
+  "begin_batch_token": "bos",
+  "begin_sequence_token": null,
+  "sequence_separator_token": "eos",
+
+  "split": "train",
+  "column_name": "secure_code",
+
+  "save_path":"./artifacts/SecureCodeV2_qwen-2.5-7b-instruct_tokenized",
+  
+  "hf_repo_id":"TQRG/SecureCodeV2_qwen-2.5-7b-instruct_tokenized"
+}
