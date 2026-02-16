@@ -261,26 +261,29 @@ class FastContrastiveSAETrainer:
         logger.info("Training complete!")
 
     def save_checkpoint(self, final: bool = False) -> None:
-        """Save model checkpoint."""
+        """Save model checkpoint in sae_lens format (cfg.json + sae_weights.safetensors)."""
         checkpoint_dir = Path(self.config.checkpoint_dir)
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
         if final:
-            path = checkpoint_dir / "contrastive_sae_final.pt"
+            sae_dir = checkpoint_dir / "final"
         else:
-            path = checkpoint_dir / f"checkpoint_step_{self.step}.pt"
+            sae_dir = checkpoint_dir / f"step_{self.step}"
 
+        # Save in sae_lens format using built-in save_model method
+        self.sae.save_model(sae_dir)
+
+        # Also save training state for resuming
+        training_state_path = sae_dir / "training_state.pt"
         torch.save(
             {
-                "sae_state_dict": self.sae.state_dict(),
                 "optimizer_state_dict": self.optimizer.state_dict(),
                 "scheduler_state_dict": self.scheduler.state_dict(),
                 "step": self.step,
-                "config": self.config.__dict__,
             },
-            path,
+            training_state_path,
         )
-        logger.info(f"Saved checkpoint to {path}")
+        logger.info(f"Saved checkpoint to {sae_dir}")
 
 
 def create_sae(config: FastContrastiveTrainingConfig) -> TopKCLTrainingSAE:
