@@ -48,9 +48,10 @@ Code is extracted from assistant responses by looking for:
 import argparse
 import json
 import re
-from datasets import Dataset
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+
+from datasets import Dataset
 
 
 def extract_code_blocks(text: str) -> List[Tuple[str, str]]:
@@ -190,11 +191,13 @@ def process_securecode_entry(row: Dict) -> List[Dict]:
 
     # Only create row if BOTH codes exist
     if vuln_code and secure_code:
-        return [{
-            **common_fields,
-            "vulnerable_code": vuln_code,
-            "secure_code": secure_code,
-        }]
+        return [
+            {
+                **common_fields,
+                "vulnerable_code": vuln_code,
+                "secure_code": secure_code,
+            }
+        ]
 
     return []
 
@@ -238,7 +241,11 @@ def main():
     if args.input:
         input_path = Path(args.input)
     else:
-        input_path = Path(__file__).parent.parent.parent / "artifacts" / "securecode_v2_train.jsonl"
+        input_path = (
+            Path(__file__).parent.parent.parent
+            / "artifacts"
+            / "securecode_v2_train.jsonl"
+        )
 
     print(f"Loading dataset from {input_path}...")
 
@@ -299,7 +306,9 @@ def main():
             args.push_to_hub,
             private=args.private,
         )
-        print(f"Successfully pushed to: https://huggingface.co/datasets/{args.push_to_hub}")
+        print(
+            f"Successfully pushed to: https://huggingface.co/datasets/{args.push_to_hub}"
+        )
 
     # Print samples
     if all_rows:
@@ -312,9 +321,9 @@ def main():
         print(f"Severity: {row['severity']}")
         print(f"Vulnerable code length: {len(row['vulnerable_code'])} chars")
         print(f"Secure code length: {len(row['secure_code'])} chars")
-        if row['vulnerable_code']:
+        if row["vulnerable_code"]:
             print(f"Vulnerable code preview:\n{row['vulnerable_code'][:300]}...")
-        if row['secure_code']:
+        if row["secure_code"]:
             print(f"Secure code preview:\n{row['secure_code'][:300]}...")
 
     # Print statistics by category
