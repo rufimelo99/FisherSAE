@@ -6,7 +6,7 @@
   "hook_name": "blocks.0.hook_resid_post",
   "hook_head_index": null,
 
-  "dataset_path": "TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized",
+  "dataset_path": "TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_v2",
   "dataset_trust_remote_code": false,
   "streaming": true,
   "is_dataset_tokenized": true,
