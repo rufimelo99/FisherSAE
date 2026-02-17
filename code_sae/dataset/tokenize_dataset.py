@@ -25,6 +25,7 @@ def tokenize_dataset(
     tokenizer,
     column_name,
     max_length=None,
+    padding=False,
     num_proc=4,
 ):
     """
@@ -40,8 +41,8 @@ def tokenize_dataset(
                 texts,
                 truncation=True,
                 max_length=max_length,
-                padding=False,
-                return_attention_mask=False,
+                padding="max_length" if padding else False,
+                return_attention_mask=padding,
             )
         else:
             tokenized = tokenizer(
@@ -51,7 +52,10 @@ def tokenize_dataset(
                 return_attention_mask=False,
             )
 
-        return {"input_ids": tokenized["input_ids"]}
+        result = {"input_ids": tokenized["input_ids"]}
+        if padding and "attention_mask" in tokenized:
+            result["attention_mask"] = tokenized["attention_mask"]
+        return result
 
     logger.info("Tokenizing dataset...")
     tokenized = dataset.map(
@@ -84,6 +88,7 @@ def main():
     shuffle = config.get("shuffle", False)
     num_proc = config.get("num_proc", 4)
     max_length = config.get("max_length", None)
+    padding = config.get("padding", True)
     column_name = config.get("column_name", "text")
     save_path = config.get("save_path", None)
     hf_repo_id = config.get("hf_repo_id", None)
@@ -122,6 +127,7 @@ def main():
         tokenizer=tokenizer,
         column_name=column_name,
         max_length=max_length,
+        padding=padding,
         num_proc=num_proc,
     )
 
