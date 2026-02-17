@@ -49,6 +49,8 @@ def train(config):
     if sae_class is None:
         raise ValueError(f"Unknown SAE type: {sae_config.get('type')}")
 
+    wandb_project = config.pop("wandb_project", "Vulnerable-Lens-SAE")
+
     cfg = LanguageModelSAERunnerConfig(
         **config,
         device=DEVICE,
@@ -56,7 +58,7 @@ def train(config):
         # wandb_id=config.get("run_name", None),
         logger=LoggingConfig(
             log_to_wandb=True,
-            wandb_project="Vulnerable-Lens-SAE",
+            wandb_project=wandb_project,
             # run_name="experiment",
             wandb_log_frequency=30,
             eval_every_n_wandb_logs=20,
