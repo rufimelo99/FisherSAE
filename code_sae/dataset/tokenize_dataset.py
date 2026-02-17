@@ -6,9 +6,12 @@ from sae_lens import PretokenizeRunner, PretokenizeRunnerConfig
 
 from code_sae.logger import logger
 
+TRAIN_SPLIT_RATIO = 0.8
+TEST_SPLIT_RATIO = 0.2
+
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train a model")
+    parser = argparse.ArgumentParser(description="Tokenize dataset with train/test splits")
     parser.add_argument(
         "--config",
         type=str,
@@ -28,11 +31,30 @@ def main():
     with open(config_path, "r") as f:
         config = json.load(f)
     logger.info("Loading config", path=config_path)
-    cfg = PretokenizeRunnerConfig(
-        **config,
-    )
-    logger.info("Config loaded", config=cfg)
-    PretokenizeRunner(cfg).run()
+
+    base_save_path = config.get("save_path", "pretokenized")
+
+    # Create training split (80%)
+    train_config = config.copy()
+    train_config["save_path"] = f"{base_save_path}_train"
+    train_config["split"] = f"train[:{int(TRAIN_SPLIT_RATIO * 100)}%]"
+
+    logger.info("Creating training split", split_ratio=TRAIN_SPLIT_RATIO)
+    train_cfg = PretokenizeRunnerConfig(**train_config)
+    logger.info("Training config loaded", config=train_cfg)
+    PretokenizeRunner(train_cfg).run()
+
+    # Create testing split (20%)
+    test_config = config.copy()
+    test_config["save_path"] = f"{base_save_path}_test"
+    test_config["split"] = f"train[{int(TRAIN_SPLIT_RATIO * 100)}%:]"
+
+    logger.info("Creating testing split", split_ratio=TEST_SPLIT_RATIO)
+    test_cfg = PretokenizeRunnerConfig(**test_config)
+    logger.info("Testing config loaded", config=test_cfg)
+    PretokenizeRunner(test_cfg).run()
+
+    logger.info("Tokenization complete", train_path=train_config["save_path"], test_path=test_config["save_path"])
 
 
 if __name__ == "__main__":
