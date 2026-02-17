@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 
-from datasets import load_dataset
+from datasets import load_dataset, DatasetDict
 from transformers import AutoTokenizer
 
 from code_sae.logger import logger
@@ -93,6 +93,7 @@ def main():
     save_path = config.get("save_path", None)
     hf_repo_id = config.get("hf_repo_id", None)
     hf_num_shards = config.get("hf_num_shards", 1)
+    train_test_split = config.get("train_test_split", 0.8)
     trust_remote_code = config.get("dataset_trust_remote_code", False)
 
     logger.info("Config loaded",
@@ -142,17 +143,33 @@ def main():
 
     # Push to HuggingFace Hub if repo_id is specified
     if hf_repo_id:
-        # Cap num_shards to dataset size
-        actual_num_shards = min(hf_num_shards, len(tokenized_dataset))
+        # Split into train/test
+        split_dataset = tokenized_dataset.train_test_split(
+            train_size=train_test_split,
+            seed=42,
+        )
+        logger.info(
+            "Split dataset",
+            train_size=len(split_dataset["train"]),
+            test_size=len(split_dataset["test"]),
+        )
+
+        # Cap num_shards to smallest split size
+        min_split_size = min(len(split_dataset["train"]), len(split_dataset["test"]))
+        actual_num_shards = min(hf_num_shards, min_split_size)
         if actual_num_shards != hf_num_shards:
             logger.info(
-                "Capping hf_num_shards to dataset size",
+                "Capping hf_num_shards to smallest split size",
                 old=hf_num_shards,
                 new=actual_num_shards,
             )
 
         logger.info("Pushing to HuggingFace Hub", repo_id=hf_repo_id, num_shards=actual_num_shards)
-        tokenized_dataset.push_to_hub(hf_repo_id, num_shards=actual_num_shards)
+        dataset_dict = DatasetDict({
+            "train": split_dataset["train"],
+            "test": split_dataset["test"],
+        })
+        dataset_dict.push_to_hub(hf_repo_id, num_shards={"train": actual_num_shards, "test": actual_num_shards})
         logger.info("Pushed to HuggingFace Hub")
 
 
