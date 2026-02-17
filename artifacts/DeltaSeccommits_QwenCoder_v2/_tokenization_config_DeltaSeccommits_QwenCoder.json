@@ -8,7 +8,6 @@
   "begin_sequence_token": null,
   "sequence_separator_token": "eos",
 
-  "split": "train",
   "column_name": "after_version",
 
   "save_path":"./artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized",

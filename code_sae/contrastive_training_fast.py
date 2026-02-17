@@ -20,6 +20,7 @@ from typing import Literal
 
 import torch
 import wandb
+from sae_lens.saes.sae import SAEMetadata
 from safetensors.torch import save_file
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
@@ -27,7 +28,6 @@ from tqdm import tqdm
 from code_sae.logger import logger
 from code_sae.topk_cl_sae import TopKCLTrainingSAE, TopKCLTrainingSAEConfig
 from code_sae.utils import get_device, set_seed
-from sae_lens.saes.sae import SAEMetadata
 
 SEED = set_seed()
 DEVICE = get_device()
