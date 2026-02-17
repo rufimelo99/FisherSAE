@@ -4,9 +4,8 @@ CONFIG_FILE="artifacts/DeltaSeccommits_QwenCoder_v2/_training_config_layer0_stan
 
 for layer in $layers; do
     echo "Training layer $layer..."
-    
-    # Create a temp config with the updated hook_name
-    jq --arg layer "$layer" '.hook_name = "blocks.\($layer).hook_resid_post"' "$CONFIG_FILE" > /tmp/config_layer${layer}.json
-    
+    sed "s/blocks\.[0-9]*\.hook_resid_post/blocks.${layer}.hook_resid_post/" \
+        artifacts/DeltaSeccommits_QwenCoder_v2/_training_config_layer0_standard_16384_lr_1e-4.json \
+        > /tmp/config_layer${layer}.json
     python code_sae/training.py --config /tmp/config_layer${layer}.json
 done
