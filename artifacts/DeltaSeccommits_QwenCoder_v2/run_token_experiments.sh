@@ -1,5 +1,5 @@
 #!/bin/bash
-token_amounts="10000000 25000000 50000000 100000000 200000000"
+token_amounts="1000000 5000000 10000000 25000000 50000000 100000000 200000000"
 CONFIG_FILE="artifacts/DeltaSeccommits_QwenCoder_v2/_training_config_layer0_standard_16384_lr_1e-4.json"
 
 for tokens in $token_amounts; do
