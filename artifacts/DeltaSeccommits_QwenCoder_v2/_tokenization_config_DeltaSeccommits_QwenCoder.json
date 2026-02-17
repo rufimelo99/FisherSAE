@@ -3,6 +3,8 @@
   "dataset_path":"rufimelo/DeltaSecommits",
   "shuffle": true,
   "num_proc": 4,
+  "max_length": 2048,
+  "disable_concat_sequences": true,
 
   "begin_batch_token": "bos",
   "begin_sequence_token": null,
@@ -12,5 +14,5 @@
 
   "save_path":"./artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized",
   
-  "hf_repo_id":"TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized"
+  "hf_repo_id":"TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_v2"
 }

@@ -2,31 +2,68 @@ import argparse
 import json
 import os
 
-from sae_lens import PretokenizeRunner, PretokenizeRunnerConfig
+from datasets import load_dataset
+from transformers import AutoTokenizer
 
 from code_sae.logger import logger
 
-TRAIN_SPLIT_RATIO = 0.8
-
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Tokenize dataset with train/test splits"
-    )
+    parser = argparse.ArgumentParser(description="Tokenize a dataset")
     parser.add_argument(
         "--config",
         type=str,
         default="tokenization_config.json",
         help="Path to the config file",
     )
-    parser.add_argument(
-        "--training_ratio",
-        type=float,
-        default=TRAIN_SPLIT_RATIO,
-        help="Ratio of the dataset to use for training (default: 0.8)",
-    )
 
     return parser.parse_args()
+
+
+def tokenize_dataset(
+    dataset,
+    tokenizer,
+    column_name,
+    max_length=None,
+    num_proc=4,
+):
+    """
+    Tokenize a dataset with 1:1 row mapping.
+    Each row in the original dataset maps to exactly one row in the output.
+    """
+
+    def tokenize_function(examples):
+        texts = [text if text is not None else "" for text in examples[column_name]]
+
+        if max_length:
+            tokenized = tokenizer(
+                texts,
+                truncation=True,
+                max_length=max_length,
+                padding=False,
+                return_attention_mask=False,
+            )
+        else:
+            tokenized = tokenizer(
+                texts,
+                truncation=False,
+                padding=False,
+                return_attention_mask=False,
+            )
+
+        return {"input_ids": tokenized["input_ids"]}
+
+    logger.info("Tokenizing dataset...")
+    tokenized = dataset.map(
+        tokenize_function,
+        batched=True,
+        batch_size=1000,
+        num_proc=num_proc,
+        remove_columns=dataset.column_names,
+        desc="Tokenizing",
+    )
+
+    return tokenized
 
 
 def main():
@@ -39,35 +76,78 @@ def main():
         config = json.load(f)
     logger.info("Loading config", path=config_path)
 
-    base_save_path = config.get("save_path", "pretokenized")
-    train_split_ratio = args.training_ratio
-    test_split_ratio = 1.0 - train_split_ratio
+    # Extract config values
+    tokenizer_name = config.get("tokenizer_name", "gpt2")
+    dataset_path = config.get("dataset_path")
+    dataset_name = config.get("dataset_name", None)
+    split = config.get("split", "train")
+    shuffle = config.get("shuffle", False)
+    num_proc = config.get("num_proc", 4)
+    max_length = config.get("max_length", None)
+    column_name = config.get("column_name", "text")
+    save_path = config.get("save_path", None)
+    hf_repo_id = config.get("hf_repo_id", None)
+    hf_num_shards = config.get("hf_num_shards", 1)
+    trust_remote_code = config.get("dataset_trust_remote_code", False)
 
-    # Create training split (80%)
-    train_config = config.copy()
-    train_config["save_path"] = f"{base_save_path}_train"
-    train_config["split"] = f"train[:{int(train_split_ratio * 100)}%]"
+    logger.info("Config loaded",
+                tokenizer=tokenizer_name,
+                dataset=dataset_path,
+                max_length=max_length)
 
-    logger.info("Creating training split", split_ratio=train_split_ratio)
-    train_cfg = PretokenizeRunnerConfig(**train_config)
-    logger.info("Training config loaded", config=train_cfg)
-    PretokenizeRunner(train_cfg).run()
+    # Load tokenizer
+    logger.info("Loading tokenizer", name=tokenizer_name)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, trust_remote_code=trust_remote_code)
 
-    # Create testing split (20%)
-    test_config = config.copy()
-    test_config["save_path"] = f"{base_save_path}_test"
-    test_config["split"] = f"train[{int(train_split_ratio * 100)}%:]"
-
-    logger.info("Creating testing split", split_ratio=test_split_ratio)
-    test_cfg = PretokenizeRunnerConfig(**test_config)
-    logger.info("Testing config loaded", config=test_cfg)
-    PretokenizeRunner(test_cfg).run()
-
-    logger.info(
-        "Tokenization complete",
-        train_path=train_config["save_path"],
-        test_path=test_config["save_path"],
+    # Load dataset
+    logger.info("Loading dataset", path=dataset_path, name=dataset_name, split=split)
+    dataset = load_dataset(
+        dataset_path,
+        name=dataset_name,
+        split=split,
+        trust_remote_code=trust_remote_code,
     )
+
+    num_examples = len(dataset)
+    logger.info("Dataset loaded", num_examples=num_examples)
+
+    # Shuffle if requested
+    if shuffle:
+        logger.info("Shuffling dataset")
+        dataset = dataset.shuffle(seed=42)
+
+    # Tokenize dataset (1:1 row mapping)
+    tokenized_dataset = tokenize_dataset(
+        dataset=dataset,
+        tokenizer=tokenizer,
+        column_name=column_name,
+        max_length=max_length,
+        num_proc=num_proc,
+    )
+
+    logger.info("Tokenization complete", num_rows=len(tokenized_dataset))
+
+    # Save locally if save_path is specified
+    if save_path:
+        logger.info("Saving to disk", path=save_path)
+        os.makedirs(save_path, exist_ok=True)
+        tokenized_dataset.save_to_disk(save_path)
+        logger.info("Saved to disk")
+
+    # Push to HuggingFace Hub if repo_id is specified
+    if hf_repo_id:
+        # Cap num_shards to dataset size
+        actual_num_shards = min(hf_num_shards, len(tokenized_dataset))
+        if actual_num_shards != hf_num_shards:
+            logger.info(
+                "Capping hf_num_shards to dataset size",
+                old=hf_num_shards,
+                new=actual_num_shards,
+            )
+
+        logger.info("Pushing to HuggingFace Hub", repo_id=hf_repo_id, num_shards=actual_num_shards)
+        tokenized_dataset.push_to_hub(hf_repo_id, num_shards=actual_num_shards)
+        logger.info("Pushed to HuggingFace Hub")
 
 
 if __name__ == "__main__":

@@ -3,7 +3,6 @@
   "dataset_path":"DetectVul/devign",
   "shuffle": true,
   "num_proc": 4,
-  "context_size": 512,
   "begin_batch_token": "bos",
   "begin_sequence_token": null,
   "sequence_separator_token": "eos",
