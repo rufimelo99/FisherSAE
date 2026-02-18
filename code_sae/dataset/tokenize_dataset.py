@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 
-from datasets import load_dataset, DatasetDict
+from datasets import DatasetDict, load_dataset
 from transformers import AutoTokenizer
 
 from code_sae.logger import logger
