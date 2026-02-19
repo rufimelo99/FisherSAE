@@ -7,6 +7,7 @@ from pathlib import Path
 import einops
 import torch
 import wandb
+from datasets import load_dataset
 from sae_lens import SAE, HookedSAETransformer
 from sae_lens.training.activations_store import ActivationsStore
 from tqdm import tqdm
@@ -286,16 +287,15 @@ def inference(config: dict):
     )
 
     # Create activation store for the dataset
-    # Format: "dataset_name" with split specified separately
-    dataset_with_split = f"{dataset}"
+    # Pre-load dataset with the correct split since ActivationsStore.from_sae doesn't support split parameter
     logger.info("Creating activation store", dataset=dataset, split=dataset_split)
+    hf_dataset = load_dataset(dataset, split=dataset_split, streaming=True)
     activation_store = ActivationsStore.from_sae(
         model,
         sae,
         context_size=ctx_len,
-        dataset=dataset_with_split,
+        dataset=hf_dataset,
         streaming=True,
-        split=dataset_split,
     )
     activation_store.shuffle_input_dataset(seed=42)
     activation_store.set_norm_scaling_factor_if_needed()
