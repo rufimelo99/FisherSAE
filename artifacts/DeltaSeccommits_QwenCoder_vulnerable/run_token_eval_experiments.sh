@@ -2,13 +2,13 @@
 
 # SAE releases to evaluate (different training token amounts)
 SAE_RELEASES=(
-    "rufimelo/vulnerable_code_qwen_coder_standard_16384_1M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_5M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_10M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_25M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_50M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_100M"
-    # "rufimelo/vulnerable_code_qwen_coder_standard_16384_200M"
+    #"rufimelo/vulnerable_code_qwen_coder_standard_16384_1M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_5M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_10M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_25M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_50M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_100M"
+    "rufimelo/vulnerable_code_qwen_coder_standard_16384_200M"
 )
 
 SAE_ID="blocks.11.hook_resid_post"
