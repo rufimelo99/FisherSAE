@@ -10,6 +10,7 @@ import wandb
 from datasets import load_dataset
 from sae_lens import SAE, HookedSAETransformer
 from sae_lens.training.activations_store import ActivationsStore
+from sae_lens.util import extract_stop_at_layer_from_tlens_hook_name
 from tqdm import tqdm
 
 from code_sae.logger import logger
@@ -66,15 +67,15 @@ def compute_reconstruction_mse(
     """
     Compute reconstruction MSE and related metrics for a batch of tokens.
     """
-    hook_name = sae.cfg.hook_name
-    hook_head_index = sae.cfg.hook_head_index
+    hook_name = sae.cfg.metadata.hook_name
+    hook_head_index = sae.cfg.metadata.hook_head_index
 
     # Get activations from the model
     _, cache = model.run_with_cache(
         batch_tokens,
         prepend_bos=False,
         names_filter=[hook_name],
-        stop_at_layer=sae.cfg.hook_layer + 1,
+        stop_at_layer=extract_stop_at_layer_from_tlens_hook_name(hook_name),
     )
 
     # Extract activations based on hook type
@@ -273,7 +274,7 @@ def inference(config: dict):
             release=sae_release, sae_id=sae_id, device=DEVICE
         )
         if model_name is None:
-            model_name = sae.cfg.model_name
+            model_name = sae.cfg.metadata.model_name
     else:
         logger.info("Loading SAE from disk", path=sae_path)
         sae, _, _ = SAE.load_from_disk(path=sae_path, device=DEVICE)
