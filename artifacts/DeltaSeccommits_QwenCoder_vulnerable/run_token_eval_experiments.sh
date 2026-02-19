@@ -8,7 +8,6 @@ SAE_RELEASES=(
     "rufimelo/vulnerable_code_qwen_coder_standard_16384_25M"
     "rufimelo/vulnerable_code_qwen_coder_standard_16384_50M"
     "rufimelo/vulnerable_code_qwen_coder_standard_16384_100M"
-    "rufimelo/vulnerable_code_qwen_coder_standard_16384_200M"
 )
 
 SAE_ID="blocks.11.hook_resid_post"
