@@ -3,12 +3,14 @@
     "sae_id": "blocks.11.hook_resid_post",
     "model_name": "Qwen/Qwen2.5-7B-Instruct",
 
-    "dataset": "rufimelo/DeltaSecommits",
+    "dataset": "TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_v2_vulnerable",
     "dataset_split": "test",
     "n_batches": 100,
     "batch_size": 32,
     "ctx_len": 128,
     "output_dir": "inference_results",
+    "pretokenized": true,
+    "tokens_column": "input_ids",
 
     "log_to_wandb": true,
     "wandb_project": "SAE-Inference",

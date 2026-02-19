@@ -226,6 +226,8 @@ def inference(config: dict):
     batch_size = config.get("batch_size", 32)
     ctx_len = config.get("ctx_len", 128)
     output_dir = config.get("output_dir", "inference_results")
+    pretokenized = config.get("pretokenized", False)
+    tokens_column = config.get("tokens_column", "input_ids")
 
     # Wandb configuration
     wandb_project = config.get("wandb_project", "SAE-Inference")
@@ -249,6 +251,7 @@ def inference(config: dict):
             "n_batches": n_batches,
             "batch_size": batch_size,
             "ctx_len": ctx_len,
+            "pretokenized": pretokenized,
         }
         if load_from_hf:
             wandb_config["sae_release"] = sae_release
@@ -288,16 +291,33 @@ def inference(config: dict):
 
     # Create activation store for the dataset
     # Pre-load dataset with the correct split since ActivationsStore.from_sae doesn't support split parameter
-    logger.info("Creating activation store", dataset=dataset, split=dataset_split)
-    hf_dataset = load_dataset(dataset, split=dataset_split, streaming=True)
+    logger.info(
+        "Creating activation store",
+        dataset=dataset,
+        split=dataset_split,
+        pretokenized=pretokenized,
+    )
+
+    if pretokenized:
+        # For pre-tokenized datasets, load without streaming to allow proper column access
+        # and rename the tokens column to "input_ids" if needed for ActivationsStore auto-detection
+        hf_dataset = load_dataset(dataset, split=dataset_split, streaming=False)
+        if tokens_column != "input_ids" and tokens_column in hf_dataset.column_names:
+            hf_dataset = hf_dataset.rename_column(tokens_column, "input_ids")
+        logger.info("Using pre-tokenized dataset", tokens_column=tokens_column)
+    else:
+        hf_dataset = load_dataset(dataset, split=dataset_split, streaming=True)
+
     activation_store = ActivationsStore.from_sae(
         model,
         sae,
         context_size=ctx_len,
         dataset=hf_dataset,
-        streaming=True,
+        streaming=not pretokenized,
     )
-    activation_store.shuffle_input_dataset(seed=42)
+
+    if not pretokenized:
+        activation_store.shuffle_input_dataset(seed=42)
     activation_store.set_norm_scaling_factor_if_needed()
 
     # Run inference
