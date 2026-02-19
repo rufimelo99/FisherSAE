@@ -282,7 +282,7 @@ def inference(config: dict):
     model = HookedSAETransformer.from_pretrained_no_processing(
         model_name,
         device=DEVICE,
-        **sae.cfg.model_from_pretrained_kwargs,
+        **(sae.cfg.metadata.model_from_pretrained_kwargs or {}),
     )
 
     # Create activation store for the dataset
