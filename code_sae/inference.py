@@ -318,7 +318,6 @@ def inference(config: dict):
 
     if not pretokenized:
         activation_store.shuffle_input_dataset(seed=42)
-    activation_store.set_norm_scaling_factor_if_needed()
 
     # Run inference
     logger.info("Running inference", n_batches=n_batches, batch_size=batch_size)
