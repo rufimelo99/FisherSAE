@@ -1,0 +1,16 @@
+{
+    "sae_release": "rufimelo/vulnerable_code_qwen_coder_standard_16384_1M",
+    "sae_id": "blocks.11.hook_resid_post",
+    "model_name": "Qwen/Qwen2.5-7B-Instruct",
+
+    "dataset": "rufimelo/DeltaSecommits",
+    "dataset_split": "test",
+    "n_batches": 100,
+    "batch_size": 32,
+    "ctx_len": 128,
+    "output_dir": "inference_results",
+
+    "log_to_wandb": true,
+    "wandb_project": "SAE-Inference",
+    "wandb_run_name": null
+}
