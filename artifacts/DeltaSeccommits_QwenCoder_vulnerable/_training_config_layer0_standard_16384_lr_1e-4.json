@@ -52,6 +52,11 @@
   "n_eval_batches": 10,
   "eval_batch_size_prompts": 8,
 
+
+  "test_dataset_path": "TQRG/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_v2_vulnerable",
+  "test_dataset_split": "test",
+  "test_eval_every_n_steps": 100,
+
   "n_checkpoints": 0,
   "checkpoint_path": "checkpoints",
   "verbose": true,
