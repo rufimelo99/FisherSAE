@@ -19,7 +19,6 @@ SAE_CONFIG_REGISTRY = {
     "topk_cl": TopKCLTrainingSAEConfig,
 }
 
-SEED = set_seed()
 DEVICE = get_device()
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -40,10 +39,21 @@ def parse_args():
         help="Additional keyword arguments to override config",
     )
 
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for reproducibility. Overrides config seed if provided.",
+    )
+
     return parser.parse_args()
 
 
-def train(config):
+def train(config, seed: int = 42):
+    # Set seed for reproducibility
+    seed = set_seed(seed)
+    custom_logger.info(f"Using seed: {seed}")
+
     sae_config = config.pop("sae", {})
     sae_class = SAE_CONFIG_REGISTRY.get(sae_config.pop("type"))
     if sae_class is None:
@@ -54,7 +64,7 @@ def train(config):
     cfg = LanguageModelSAERunnerConfig(
         **config,
         device=DEVICE,
-        seed=SEED,
+        seed=seed,
         # wandb_id=config.get("run_name", None),
         logger=LoggingConfig(
             log_to_wandb=True,
@@ -94,4 +104,7 @@ if __name__ == "__main__":
     if kwargs:
         custom_logger.info(f"Overriding config with: {kwargs}")
         config.update(kwargs)
-    train(config)
+
+    # Determine seed: CLI arg > config > default (42)
+    seed = args.seed if args.seed is not None else config.pop("seed", 42)
+    train(config, seed=seed)
