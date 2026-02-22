@@ -173,3 +173,8 @@ cython_debug/
 /artifacts/DeltaSecommits_vulnerable_qwen-2.5-7b-instruct_tokenized
 /artifacts/SecureCodeV2_qwen-2.5-7b-instruct_tokenized
 /artifacts/SecureCodeV2_qwen-2.5-7b-instruct_tokenized_vulnerable
+/artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_test
+/artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized_train
+/artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized
+artifacts/.DS_Store
+.DS_Store
