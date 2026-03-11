@@ -19,7 +19,7 @@
   "store_batch_size_prompts": 8,
 
   "seqpos_slice": [null, null],
-  "disable_concat_sequences": false,
+  "disable_concat_sequences": true,
   "sequence_separator_token": "bos",
 
   "act_store_device": "cpu",
