@@ -178,3 +178,9 @@ cython_debug/
 /artifacts/DeltaSecommits_qwen-2.5-7b-instruct_tokenized
 artifacts/.DS_Store
 .DS_Store
+artifacts/sard_pairs.jsonl
+artifacts/sard_functions.jsonl
+artifacts/securecode_v2_train.jsonl
+artifacts/diversevul_20230702.jsonl
+/.sard_cache
+/artifacts/Juliet_C_qwen-2.5-7b-instruct_tokenized_vulnerable

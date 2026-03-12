@@ -84,6 +84,7 @@ def main():
     tokenizer_name = config.get("tokenizer_name", "gpt2")
     dataset_path = config.get("dataset_path")
     dataset_name = config.get("dataset_name", None)
+    data_files = config.get("data_files", None)
     split = config.get("split", "train")
     shuffle = config.get("shuffle", False)
     num_proc = config.get("num_proc", 4)
@@ -95,6 +96,8 @@ def main():
     hf_num_shards = config.get("hf_num_shards", 1)
     train_test_split = config.get("train_test_split", 0.8)
     trust_remote_code = config.get("dataset_trust_remote_code", False)
+    filter_column = config.get("filter_column", None)
+    filter_value = config.get("filter_value", None)
 
     logger.info("Config loaded",
                 tokenizer=tokenizer_name,
@@ -110,12 +113,23 @@ def main():
     dataset = load_dataset(
         dataset_path,
         name=dataset_name,
+        data_files=data_files,
         split=split,
         trust_remote_code=trust_remote_code,
     )
 
     num_examples = len(dataset)
     logger.info("Dataset loaded", num_examples=num_examples)
+
+    # Filter by column value if requested
+    if filter_column and filter_value is not None:
+        logger.info("Filtering dataset", column=filter_column, value=filter_value)
+        dataset = dataset.filter(
+            lambda x: x[filter_column] == filter_value,
+            num_proc=num_proc,
+            desc=f"Filtering {filter_column}={filter_value}",
+        )
+        logger.info("Filtered dataset", num_examples=len(dataset))
 
     # Shuffle if requested
     if shuffle:

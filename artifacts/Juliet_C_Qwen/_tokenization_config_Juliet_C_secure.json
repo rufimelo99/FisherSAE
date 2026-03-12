@@ -1,0 +1,21 @@
+{
+  "tokenizer_name": "Qwen/Qwen2.5-7B-Instruct",
+  "dataset_path": "rufimelo/juliet",
+  "data_files": "sard_pairs.jsonl",
+  "split": "train",
+  "shuffle": true,
+  "num_proc": 4,
+  "max_length": 512,
+  "padding": true,
+
+  "filter_column": "language",
+  "filter_value": "C",
+
+  "column_name": "secure",
+
+  "save_path": "./artifacts/Juliet_C_qwen-2.5-7b-instruct_tokenized_secure",
+
+  "hf_repo_id": "TQRG/Juliet_C_qwen-2.5-7b-instruct_tokenized",
+  "hf_num_shards": 8,
+  "train_test_split": 0.9
+}
