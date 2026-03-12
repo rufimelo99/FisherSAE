@@ -4,11 +4,11 @@
 
 set -euo pipefail
 
-token_amounts="100000000"
-LAYERS="11"
+token_amounts="50000000"
+layers="0 3 7 11 15 19 23 27"
 BASE_CONFIG="artifacts/Juliet_C_Qwen_TopK/_training_config_layer0_topk_16384_lr_2e-4.json"
 
-for layer in $LAYERS; do
+for layer in $layers; do
     for tokens in $token_amounts; do
         echo "===== Juliet-C TopK — layer ${layer} — ${tokens} tokens ====="
         tmp_cfg="/tmp/juliet_c_topk_layer${layer}_tokens${tokens}.json"

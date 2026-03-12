@@ -35,7 +35,7 @@
   "sae_compilation_mode": null,
 
   "train_batch_size_tokens": 4096,
-  "training_tokens": 100000000,
+  "training_tokens": 50000000,
 
   "adam_beta1": 0.9,
   "adam_beta2": 0.999,
