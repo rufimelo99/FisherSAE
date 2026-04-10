@@ -1,12 +1,12 @@
 {
-  "wandb_project": "DeltaSecommits-QwenCoder14B-vulnerable-SAE",
-  "model_name": "Qwen/Qwen2.5-Coder-14B-Instruct",
+  "wandb_project": "DeltaSecommits-Qwen2.5-14B-vulnerable-SAE",
+  "model_name": "Qwen/Qwen2.5-14B-Instruct",
   "model_class_name": "HookedTransformer",
 
   "hook_name": "blocks.0.hook_resid_post",
   "hook_head_index": null,
 
-  "dataset_path": "TQRG/DeltaSecommits_qwen2.5-coder-14b-instruct_tokenized_v2_vulnerable",
+  "dataset_path": "TQRG/DeltaSecommits_qwen2.5-14b-instruct_tokenized_v2_vulnerable",
   "dataset_trust_remote_code": false,
   "streaming": true,
   "is_dataset_tokenized": true,

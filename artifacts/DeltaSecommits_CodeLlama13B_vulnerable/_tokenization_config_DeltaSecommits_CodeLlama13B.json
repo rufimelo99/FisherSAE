@@ -1,5 +1,5 @@
 {
-  "tokenizer_name": "codellama/CodeLlama-13b-Instruct-hf",
+  "tokenizer_name": "meta-llama/Llama-2-13b-chat-hf",
   "dataset_path": "rufimelo/DeltaSecommits",
   "shuffle": true,
   "num_proc": 4,
@@ -13,7 +13,7 @@
 
   "column_name": "prior_version",
 
-  "save_path": "./artifacts/DeltaSecommits_codellama-13b-instruct_tokenized",
+  "save_path": "./artifacts/DeltaSecommits_llama-2-13b-chat_tokenized",
 
-  "hf_repo_id": "TQRG/DeltaSecommits_codellama-13b-instruct_tokenized_v2_vulnerable"
+  "hf_repo_id": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable"
 }

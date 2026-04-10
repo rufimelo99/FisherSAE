@@ -1,5 +1,5 @@
 {
-  "tokenizer_name": "Qwen/Qwen2.5-Coder-14B-Instruct",
+  "tokenizer_name": "Qwen/Qwen2.5-14B-Instruct",
   "dataset_path": "rufimelo/DeltaSecommits",
   "shuffle": true,
   "num_proc": 4,
@@ -13,7 +13,7 @@
 
   "column_name": "prior_version",
 
-  "save_path": "./artifacts/DeltaSecommits_qwen2.5-coder-14b-instruct_tokenized",
+  "save_path": "./artifacts/DeltaSecommits_qwen2.5-14b-instruct_tokenized",
 
-  "hf_repo_id": "TQRG/DeltaSecommits_qwen2.5-coder-14b-instruct_tokenized_v2_vulnerable"
+  "hf_repo_id": "TQRG/DeltaSecommits_qwen2.5-14b-instruct_tokenized_v2_vulnerable"
 }

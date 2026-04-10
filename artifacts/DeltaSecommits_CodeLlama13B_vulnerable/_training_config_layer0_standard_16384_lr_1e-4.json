@@ -1,12 +1,12 @@
 {
-  "wandb_project": "DeltaSecommits-CodeLlama13B-vulnerable-SAE",
-  "model_name": "codellama/CodeLlama-13b-Instruct-hf",
+  "wandb_project": "DeltaSecommits-Llama2-13B-vulnerable-SAE",
+  "model_name": "meta-llama/Llama-2-13b-chat-hf",
   "model_class_name": "HookedTransformer",
 
   "hook_name": "blocks.0.hook_resid_post",
   "hook_head_index": null,
 
-  "dataset_path": "TQRG/DeltaSecommits_codellama-13b-instruct_tokenized_v2_vulnerable",
+  "dataset_path": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable",
   "dataset_trust_remote_code": false,
   "streaming": true,
   "is_dataset_tokenized": true,
