@@ -11,7 +11,7 @@
 
 layers="0 3 7 11 15 19 23 27"
 layers="15"
-CONFIG_FILE="artifacts/DeltaSecommits_CodeLlama13B_vulnerable/_training_config_layer0_standard_16384_lr_1e-4.json"
+CONFIG_FILE="artifacts/DeltaSecommits_Llama2-13B_vulnerable/_training_config_layer0_standard_16384_lr_1e-4.json"
 
 for layer in $layers; do
     echo "Training layer $layer..."
