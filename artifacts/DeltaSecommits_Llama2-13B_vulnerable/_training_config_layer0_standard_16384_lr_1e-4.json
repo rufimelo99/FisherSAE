@@ -15,11 +15,13 @@
   "cached_activations_path": null,
   "from_pretrained_path": null,
 
+  "context_size": 100,
+
   "n_batches_in_buffer": 32,
   "store_batch_size_prompts": 8,
 
   "seqpos_slice": [null, null],
-  "disable_concat_sequences": true,
+  "disable_concat_sequences": false,
   "sequence_separator_token": "bos",
 
   "act_store_device": "cpu",
