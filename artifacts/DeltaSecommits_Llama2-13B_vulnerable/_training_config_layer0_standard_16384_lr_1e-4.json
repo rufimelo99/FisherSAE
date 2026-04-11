@@ -15,13 +15,11 @@
   "cached_activations_path": null,
   "from_pretrained_path": null,
 
-  "context_size": 100,
-
   "n_batches_in_buffer": 32,
   "store_batch_size_prompts": 8,
 
   "seqpos_slice": [null, null],
-  "disable_concat_sequences": false,
+  "disable_concat_sequences": true,
   "sequence_separator_token": "bos",
 
   "act_store_device": "cpu",
@@ -29,7 +27,7 @@
 
   "prepend_bos": true,
   "autocast": false,
-  "autocast_lm": true,
+  "autocast_lm": false,
 
   "compile_llm": false,
   "llm_compilation_mode": null,
@@ -54,6 +52,7 @@
   "n_eval_batches": 10,
   "eval_batch_size_prompts": 8,
 
+
   "test_dataset_split": "test",
   "test_eval_every_n_steps": 100,
 
@@ -69,7 +68,7 @@
   "exclude_special_tokens": false,
 
   "sae": {
-    "d_in": 5120,
+    "d_in": 3584,
     "d_sae": 16384,
     "dtype": "float32",
     "device": "cpu",
