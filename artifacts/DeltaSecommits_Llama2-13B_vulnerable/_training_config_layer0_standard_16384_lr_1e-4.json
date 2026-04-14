@@ -17,7 +17,7 @@
 
   "context_size": 100,
 
-  "n_batches_in_buffer": 32,
+  "n_batches_in_buffer": 512,
   "store_batch_size_prompts": 8,
 
   "seqpos_slice": [null, null],
