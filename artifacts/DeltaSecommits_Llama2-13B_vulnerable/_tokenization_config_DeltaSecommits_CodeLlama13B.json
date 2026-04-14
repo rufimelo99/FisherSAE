@@ -5,7 +5,7 @@
   "num_proc": 4,
   "max_length": 2048,
   "disable_concat_sequences": true,
-  "padding": false,
+  "padding": true,
   "padding_token": "eos",
 
   "begin_batch_token": "bos",
