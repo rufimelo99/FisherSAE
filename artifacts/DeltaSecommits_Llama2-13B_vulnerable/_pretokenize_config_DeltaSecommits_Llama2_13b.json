@@ -1,0 +1,22 @@
+{
+  "tokenizer_name": "meta-llama/Llama-2-13b-chat-hf",
+  "dataset_path": "rufimelo/DeltaSecommits",
+  "dataset_trust_remote_code": false,
+  "split": "train",
+  "column_name": "prior_version",
+  "shuffle": true,
+  "seed": 42,
+  "num_proc": 4,
+  "streaming": false,
+  "pretokenize_batch_size": 1000,
+
+  "context_size": 100,
+
+  "begin_batch_token": "bos",
+  "begin_sequence_token": null,
+  "sequence_separator_token": "bos",
+  "disable_concat_sequences": true,
+
+  "save_path": "./artifacts/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable",
+  "hf_repo_id": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable"
+}
