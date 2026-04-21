@@ -71,11 +71,30 @@ def tokenize_dataset_padded(config_file):
 
     logger.info("Tokenization complete", num_rows=len(tokenized_dataset))
 
+    # Split into train/test
+    split_dataset = tokenized_dataset.train_test_split(
+        train_size=0.8,
+        seed=42,
+    )
+    logger.info(
+        "Split dataset",
+        train_size=len(split_dataset["train"]),
+        test_size=len(split_dataset["test"]),
+    )
+
     # Push to HuggingFace Hub
+    from datasets import DatasetDict
+
+    dataset_dict = DatasetDict(
+        {
+            "train": split_dataset["train"],
+            "test": split_dataset["test"],
+        }
+    )
     logger.info("Pushing to HuggingFace Hub", repo_id=hf_repo_id)
-    tokenized_dataset.push_to_hub(
+    dataset_dict.push_to_hub(
         repo_id=hf_repo_id,
-        num_shards=64,
+        num_shards={"train": 32, "test": 32},
         private=False,
     )
     logger.info("Pushed to HuggingFace Hub")
