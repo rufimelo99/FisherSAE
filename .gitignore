@@ -184,3 +184,5 @@ artifacts/securecode_v2_train.jsonl
 artifacts/diversevul_20230702.jsonl
 /.sard_cache
 /artifacts/Juliet_C_qwen-2.5-7b-instruct_tokenized_vulnerable
+/artifacts/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable
+/artifacts/DeltaSecommits_llama-2-13b-chat_tokenized_v3_vulnerable

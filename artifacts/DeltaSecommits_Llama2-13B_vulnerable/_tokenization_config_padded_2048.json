@@ -1,0 +1,7 @@
+{
+  "tokenizer_name": "meta-llama/Llama-2-13b-chat-hf",
+  "dataset_path": "rufimelo/DeltaSecommits",
+  "column_name": "prior_version",
+  "max_length": 2048,
+  "hf_repo_id": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v3_vulnerable"
+}

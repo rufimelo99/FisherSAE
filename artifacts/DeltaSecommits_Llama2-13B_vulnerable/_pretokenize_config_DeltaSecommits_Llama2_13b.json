@@ -17,6 +17,6 @@
   "sequence_separator_token": "bos",
   "disable_concat_sequences": true,
 
-  "save_path": "./artifacts/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable",
-  "hf_repo_id": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable"
+  "save_path": "./artifacts/DeltaSecommits_llama-2-13b-chat_tokenized_v3_vulnerable",
+  "hf_repo_id": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v3_vulnerable"
 }

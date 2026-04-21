@@ -6,7 +6,7 @@
   "hook_name": "blocks.0.hook_resid_post",
   "hook_head_index": null,
 
-  "dataset_path": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v2_vulnerable",
+  "dataset_path": "TQRG/DeltaSecommits_llama-2-13b-chat_tokenized_v3_vulnerable",
   "dataset_trust_remote_code": false,
   "streaming": true,
   "is_dataset_tokenized": true,
